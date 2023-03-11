@@ -7,4 +7,9 @@
     <string name="track_title">Let Me Down Slowly</string>
     <string name="track_author">Almost Awesome</string>
     <string name="favourite">Add to favourite</string>
+    <string name="favourite_list">Favourite</string>
+    <string name="search_favourite">Search</string>
+    <string name="add_playlist">Add</string>
+    <string name="back">Go back</string>
+    <string name="playlist">Playlist icon</string>
 </resources>

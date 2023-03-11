@@ -10,6 +10,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
@@ -21,7 +22,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 fun BottomBarNavigation(
     items: List<BottomNavItem>,
     navController: NavHostController,
-    onItemClicked: () -> Unit,
+    onItemClicked: (BottomNavItem) -> Unit,
     modifier: Modifier = Modifier
 ) {
     val backStackEntry = navController.currentBackStackEntryAsState()
@@ -35,11 +36,11 @@ fun BottomBarNavigation(
             val selected = item.route == backStackEntry.value?.destination?.route
             BottomNavigationItem(
                 selected = selected,
-                onClick = onItemClicked,
+                onClick = { onItemClicked(item) },
                 icon = {
                     Column(horizontalAlignment = CenterHorizontally) {
                         Icon(
-                            imageVector = item.icon,
+                            painter = painterResource(id = item.icon),
                             contentDescription = item.name
                         )
                     }

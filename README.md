@@ -4,7 +4,7 @@ Android audio player application made with Jetpack Compose
 Maxim Logvinovich, group №153502
 
 # Class diagram
-![Image](https://www.dropbox.com/s/po9grn1aw3o201c/Workspace.png?dl=0)
+![Workspace](https://user-images.githubusercontent.com/90986373/224641460-6e3add90-a431-48bc-acce-ed0b98c4f26c.png)
 
 # App functions
 * **List of tracks** - show currently available list of tracks 

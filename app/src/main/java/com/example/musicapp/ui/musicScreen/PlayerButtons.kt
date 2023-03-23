@@ -25,6 +25,8 @@ fun PlayerButtons(
     sideButtonSize: Dp = 42.dp,
     modifier: Modifier = Modifier,
 ) {
+
+    
     Row(
         modifier = modifier.fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically,

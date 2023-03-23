@@ -12,4 +12,6 @@
     <string name="add_playlist">Add</string>
     <string name="back">Go back</string>
     <string name="playlist">Playlist icon</string>
+    <string name="email">Email</string>
+    <string name="loading_failed">Error of loading</string>
 </resources>

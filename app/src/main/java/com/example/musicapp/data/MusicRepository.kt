@@ -3,6 +3,7 @@ package com.example.musicapp.data
 import android.util.Base64
 import android.util.Log
 import com.example.musicapp.model.Albums
+import com.example.musicapp.model.AlbumsResponse
 import com.example.musicapp.model.TokenResponse
 import com.example.musicapp.network.SpotifyApiService
 import java.nio.charset.StandardCharsets
@@ -10,7 +11,7 @@ import java.nio.charset.StandardCharsets
 interface MusicRepository {
 
     // fetches albums from spotify api
-    suspend fun getAlbums(auth_token: String): Albums
+    suspend fun getAlbums(auth_token: String, limit: Int): AlbumsResponse
 
     suspend fun getToken(): TokenResponse
 }
@@ -23,11 +24,10 @@ class NetworkMusicRepository(
 
     private val clientID = "0f25fb398de04e8d822773bd911c2aaa"
     private val clientSECRET = "3de0639db248486c9259156d99a43df5"
-    private val albums_amount = 10
     /** Fetches list of albums releases from Spotify API*/
-    override suspend fun getAlbums(auth_token: String): Albums {
+    override suspend fun getAlbums(auth_token: String, limit: Int): AlbumsResponse {
         Log.i("RESPONSE_TOKEN", auth_token)
-        return apiService.getAlbums(auth_token, albums_amount)
+        return apiService.getAlbums(auth_token, limit)
     }
 
     override suspend fun getToken(): TokenResponse {

@@ -28,7 +28,7 @@ fun BottomBarNavigation(
     val backStackEntry = navController.currentBackStackEntryAsState()
     BottomNavigation(
         modifier = modifier,
-        backgroundColor = Color.Gray,
+        backgroundColor = Color.Black,
         elevation = 5.dp
 
     ) {
@@ -41,7 +41,8 @@ fun BottomBarNavigation(
                     Column(horizontalAlignment = CenterHorizontally) {
                         Icon(
                             painter = painterResource(id = item.icon),
-                            contentDescription = item.name
+                            contentDescription = item.name,
+                            tint = Color.White
                         )
                     }
                 }

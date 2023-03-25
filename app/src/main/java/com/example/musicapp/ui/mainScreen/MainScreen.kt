@@ -8,17 +8,19 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.navigation.NavController
 import com.example.musicapp.network.NetworkUiState
 
 
 //@Preview(showSystemUi = true)
 @Composable
 fun MainScreen(
+    navController: NavController,
     networkUiState: NetworkUiState
 ) {
     when(networkUiState) {
         is NetworkUiState.Loading -> LoadingScreen()
-        is NetworkUiState.Success -> ResultScreen()
+        is NetworkUiState.Success -> ResultScreen(networkUiState.albumsResponse, navController)
         is NetworkUiState.Error -> ErrorScreen()
     }
 }

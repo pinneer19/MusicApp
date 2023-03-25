@@ -13,17 +13,19 @@ import androidx.lifecycle.viewmodel.viewModelFactory
 import com.example.musicapp.MusicApplication
 import com.example.musicapp.data.MusicRepository
 import com.example.musicapp.data.NetworkMusicRepository
+import com.example.musicapp.model.AlbumsResponse
 import com.example.musicapp.model.TokenResponse
 import kotlinx.coroutines.launch
 import retrofit2.*
 import java.io.IOException
 
 sealed interface NetworkUiState {
-    object Success : NetworkUiState
+    data class Success(val albumsResponse: AlbumsResponse) : NetworkUiState
     object Error : NetworkUiState
     object Loading : NetworkUiState
     companion object {
         var token: String = ""
+        var albumsResponse: AlbumsResponse? = null
     }
 }
 
@@ -46,9 +48,9 @@ class NetworkViewModel(private val musicRepository: MusicRepository) : ViewModel
             networkUiState = try {
                 //val networkMusicRepository = NetworkMusicRepository()
                 getSpotifyToken(musicRepository)
-                val listResult = musicRepository.getAlbums(NetworkUiState.token)
-                Log.i("RESPONSE", listResult.items.size.toString())
-                NetworkUiState.Success
+                NetworkUiState.albumsResponse = musicRepository.getAlbums(NetworkUiState.token, 10)
+                Log.i("RESPONSE", "Success loading")
+                NetworkUiState.Success(NetworkUiState.albumsResponse!!)
             } catch (e: IOException) {
                 Log.d("RESPONSE", e.message.toString())
                 NetworkUiState.Error

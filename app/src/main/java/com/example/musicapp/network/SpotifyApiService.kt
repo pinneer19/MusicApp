@@ -4,6 +4,7 @@ import androidx.compose.ui.res.stringResource
 import com.example.musicapp.R
 import com.example.musicapp.model.Album
 import com.example.musicapp.model.Albums
+import com.example.musicapp.model.AlbumsResponse
 import com.example.musicapp.model.TokenResponse
 import kotlinx.serialization.ExperimentalSerializationApi
 import retrofit2.Call
@@ -13,12 +14,13 @@ import retrofit2.http.*
 
 interface SpotifyApiService {
 
-    @Headers("Content-Type: application/json")
+
+    @Headers("Accept: application/json","Content-Type: application/json")
     @GET("browse/new-releases")
     suspend fun getAlbums(
         @Header("Authorization") authorization: String,
         @Query("limit") limit: Int,
-    ): Albums
+    ): AlbumsResponse
 
     @POST("api/token")
     @FormUrlEncoded

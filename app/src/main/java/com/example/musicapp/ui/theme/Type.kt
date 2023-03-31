@@ -10,9 +10,10 @@ import com.example.musicapp.R
 
 // Set of Material typography styles to start with
 val Gotham = FontFamily(
-    Font(R.font.gotham_bold, FontWeight.Bold),
+    //Font(R.font.gotham_bold, FontWeight.Bold),
     Font(R.font.gotham_light, FontWeight.Light),
     Font(R.font.gotham_medium, FontWeight.Normal),
+    Font(R.font.gotham_bold_italic, FontWeight.Bold),
 )
 
 
@@ -25,8 +26,8 @@ val Typography = Typography(
     ),
     h2 = TextStyle(
         fontFamily = Gotham,
-        fontWeight = FontWeight.Normal,
-        fontSize = 10.sp
+        fontWeight = FontWeight.Bold,
+        fontSize = 22.sp
     ),
     /* Other default text styles to override
     button = TextStyle(

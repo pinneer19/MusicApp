@@ -14,8 +14,6 @@ import retrofit2.converter.scalars.ScalarsConverterFactory
 
 interface AppContainer {
     val musicApiRepository: MusicRepository
-
-
 }
 
 class MusicAppContainer() : AppContainer {

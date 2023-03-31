@@ -1,21 +1,24 @@
 package com.example.musicapp.ui.navigation
 
-import androidx.compose.runtime.Composable
+//import com.example.musical.ui.loginScreen.LoginScreen
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
-import com.example.musicapp.model.Album
-import com.example.musicapp.model.AlbumsResponse
+import com.example.musicapp.model.TrackResponse
 import com.example.musicapp.network.NetworkUiState
 import com.example.musicapp.network.NetworkViewModel
 import com.example.musicapp.ui.AlbumScreen.AlbumScreen
-//import com.example.musicapp.ui.loginScreen.LoginScreen
 import com.example.musicapp.ui.mainScreen.LoadingScreen
 import com.example.musicapp.ui.mainScreen.MainScreen
-import com.google.gson.Gson
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 
 @Composable
@@ -52,13 +55,31 @@ fun Navigation(
         composable(
             route = NavRoutes.Album.name + "/{album}",
             arguments = listOf(navArgument("album") {
-                type = ProfileArgType()
+                type = NavType.IntType
             })
         ) { navBackStackEntry ->
-            val album = navBackStackEntry.arguments?.getString("album")
+            /*val album = navBackStackEntry.arguments?.getString("album")
                 ?.let { Gson().fromJson(it, Album::class.java) } ?: throw NullPointerException()
-            AlbumScreen(album = album)
+            */
+
+            val albumId =
+                navBackStackEntry.arguments?.getInt("album") ?: throw NullPointerException()
+            val album = NetworkUiState.albumsResponse!!.albums.items[albumId]
+            var tracks by remember { mutableStateOf<TrackResponse?>(null) }
+
+            LaunchedEffect(Unit) {
+                withContext(Dispatchers.IO) {
+                    tracks = networkViewModel.musicRepository.getAlbumTracks(album.id, NetworkUiState.token)
+                }
+            }
+            if (tracks != null) {
+                AlbumScreen(
+                    networkViewModel.musicRepository,
+                    NetworkUiState.albumsResponse!!.albums.items[albumId],
+                    tracks!!
+                )
+            }
+            else LoadingScreen()
         }
     }
-
 }

@@ -29,7 +29,7 @@ sealed interface NetworkUiState {
     }
 }
 
-class NetworkViewModel(private val musicRepository: MusicRepository) : ViewModel() {
+class NetworkViewModel(/*private*/ val musicRepository: MusicRepository) : ViewModel() {
     /** The mutable State that stores the status of the most recent request */
     var networkUiState: NetworkUiState by mutableStateOf(NetworkUiState.Loading)
         private set
@@ -49,7 +49,8 @@ class NetworkViewModel(private val musicRepository: MusicRepository) : ViewModel
                 //val networkMusicRepository = NetworkMusicRepository()
                 getSpotifyToken(musicRepository)
                 NetworkUiState.albumsResponse = musicRepository.getAlbums(NetworkUiState.token, 10)
-                Log.i("RESPONSE", "Success loading")
+
+                Log.d("RESPONSE", "Success loading")
                 NetworkUiState.Success(NetworkUiState.albumsResponse!!)
             } catch (e: IOException) {
                 Log.d("RESPONSE", e.message.toString())

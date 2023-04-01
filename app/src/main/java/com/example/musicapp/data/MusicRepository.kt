@@ -27,7 +27,7 @@ class NetworkMusicRepository(
     /** Fetches list of albums releases from Spotify API*/
     override suspend fun getAlbums(auth_token: String, limit: Int): AlbumsResponse {
         Log.i("RESPONSE_TOKEN", auth_token)
-        return apiService.getAlbums(auth_token, limit)
+        return apiService.getAlbums(auth_token, limit).apply { albums.items.filter { it.available_markets.contains("BY") } }
     }
 
     override suspend fun getAlbumTracks(albumId: String, auth_token: String): TrackResponse {

@@ -9,8 +9,12 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Card
+import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
+import androidx.compose.material.pullrefresh.PullRefreshIndicator
+import androidx.compose.material.pullrefresh.PullRefreshState
+import androidx.compose.material.pullrefresh.pullRefresh
 import androidx.compose.material.ripple.rememberRipple
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
@@ -30,32 +34,47 @@ import coil.request.ImageRequest
 import com.example.musicapp.R
 import com.example.musicapp.model.Album
 import com.example.musicapp.model.AlbumsResponse
+import com.example.musicapp.model.AutoResizedText
 import com.example.musicapp.model.Image
 import com.example.musicapp.ui.navigation.NavRoutes
 
 
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun ResultScreen(
     albumsResponse: AlbumsResponse,
     navController: NavController,
-    modifier: Modifier = Modifier,
+    pullRefreshState: PullRefreshState,
+    refreshing: Boolean,
+    modifier: Modifier = Modifier
 ) {
+    Box(Modifier.fillMaxSize()) {
 
-    LazyVerticalGrid(
-        verticalArrangement = Arrangement.spacedBy(10.dp),
-        horizontalArrangement = Arrangement.spacedBy(10.dp),
-        contentPadding = PaddingValues(top = 10.dp, start = 10.dp, end = 10.dp, bottom = 60.dp),
-        columns = GridCells.Fixed(2),
-        modifier = modifier.fillMaxSize(),
+        LazyVerticalGrid(
+            verticalArrangement = Arrangement.spacedBy(10.dp),
+            horizontalArrangement = Arrangement.spacedBy(10.dp),
+            contentPadding = PaddingValues(top = 10.dp, start = 10.dp, end = 10.dp, bottom = 60.dp),
+            columns = GridCells.Fixed(2),
+            modifier = modifier
+                .fillMaxSize()
+                .pullRefresh(pullRefreshState)
 
         ) {
-        itemsIndexed(
-            items = albumsResponse.albums.items,
-            key = { _, item -> item.id }) { index: Int, item ->
-            AlbumCard(
-                album = item,
-                onAlbumClick = { navController.navigate(NavRoutes.Album.name + "/$index") })
+            itemsIndexed(
+                items = albumsResponse.albums.items,
+                key = { _, item -> item.id }) { index: Int, item ->
+                AlbumCard(
+                    album = item,
+                    onAlbumClick = { navController.navigate(NavRoutes.Album.name + "/$index") })
+            }
         }
+
+        PullRefreshIndicator(
+            refreshing = refreshing,
+            state = pullRefreshState,
+            modifier = Modifier.align(Alignment.TopCenter)
+        )
+
     }
 }
 
@@ -65,13 +84,13 @@ fun AlbumCard(
     onAlbumClick: (Album) -> Unit,
     modifier: Modifier = Modifier,
     backColor: Color = MaterialTheme.colors.primary
-    ) {
+) {
     Card(
         modifier = modifier
             .drawBehind {
                 drawRoundRect(
                     color = backColor,
-                    cornerRadius = CornerRadius(32f,32f)
+                    cornerRadius = CornerRadius(32f, 32f)
                 )
             }
             .clickable(
@@ -79,8 +98,7 @@ fun AlbumCard(
                 indication = createIndication(),
                 onClick = { onAlbumClick(album) }
             )
-            .padding(bottom = 2.dp)
-        ,
+            .padding(bottom = 2.dp),
         elevation = 8.dp,
         shape = RoundedCornerShape(9.dp),
     ) {
@@ -89,11 +107,13 @@ fun AlbumCard(
             verticalArrangement = Arrangement.spacedBy(10.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
-            //Spacer(modifier = modifier.height(0.dp))
+
             AlbumImage(album.images[0], Modifier.fillMaxWidth())
-            Text(
+
+            AutoResizedText(
                 text = album.name,
-                style = MaterialTheme.typography.body1
+                style = MaterialTheme.typography.body1,
+                modifier = Modifier.padding(start = 15.dp, end = 15.dp)
             )
             Spacer(modifier = modifier.height(0.dp))
         }

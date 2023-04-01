@@ -17,6 +17,7 @@ interface SpotifyApiService {
     suspend fun getAlbums(
         @Header("Authorization") authorization: String,
         @Query("limit") limit: Int,
+        @Query("country") country: String = "US"
     ): AlbumsResponse
 
 

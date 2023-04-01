@@ -1,6 +1,7 @@
 package com.example.musicapp.network
 
 import android.util.Log
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -15,6 +16,8 @@ import com.example.musicapp.data.MusicRepository
 import com.example.musicapp.data.NetworkMusicRepository
 import com.example.musicapp.model.AlbumsResponse
 import com.example.musicapp.model.TokenResponse
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import retrofit2.*
 import java.io.IOException
@@ -34,6 +37,10 @@ class NetworkViewModel(/*private*/ val musicRepository: MusicRepository) : ViewM
     var networkUiState: NetworkUiState by mutableStateOf(NetworkUiState.Loading)
         private set
 
+    private val _isLoading = MutableStateFlow(false)
+    val isLoading = _isLoading.asStateFlow()
+
+
     init {
         getApiAlbums()
     }
@@ -41,21 +48,23 @@ class NetworkViewModel(/*private*/ val musicRepository: MusicRepository) : ViewM
     /**
      * Gets Albums information from the Spotify API Retrofit service
      */
-    private fun getApiAlbums() {
+    fun getApiAlbums() {
 
         viewModelScope.launch {
-
+            _isLoading.value = true
             networkUiState = try {
                 //val networkMusicRepository = NetworkMusicRepository()
                 getSpotifyToken(musicRepository)
-                NetworkUiState.albumsResponse = musicRepository.getAlbums(NetworkUiState.token, 10)
+                NetworkUiState.albumsResponse = musicRepository.getAlbums(NetworkUiState.token, 20)
 
-                Log.d("RESPONSE", "Success loading")
+                _isLoading.value = false
                 NetworkUiState.Success(NetworkUiState.albumsResponse!!)
             } catch (e: IOException) {
+                _isLoading.value = false
                 Log.d("RESPONSE", e.message.toString())
                 NetworkUiState.Error
             } catch (e: HttpException) {
+                _isLoading.value = false
                 Log.d("RESPONSE", e.response()?.errorBody()?.string().toString())
                 NetworkUiState.Error
             }

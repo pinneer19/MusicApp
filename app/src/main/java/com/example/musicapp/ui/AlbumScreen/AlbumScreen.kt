@@ -31,6 +31,7 @@ import coil.request.ImageRequest
 import com.example.musicapp.R
 import com.example.musicapp.data.MusicRepository
 import com.example.musicapp.model.Album
+import com.example.musicapp.model.AutoResizedText
 import com.example.musicapp.model.Track
 import com.example.musicapp.model.TrackResponse
 import kotlinx.coroutines.CoroutineScope
@@ -52,7 +53,7 @@ fun AlbumScreen(
         bottomSheetState = rememberBottomSheetState(BottomSheetValue.Collapsed)
     )
     val screenHeight = LocalConfiguration.current.screenHeightDp.dp
-    val isLocked = remember { mutableStateOf(false) }
+
     val bottomSheetHeight = try {
         screenHeight - bottomSheetScaffoldState.bottomSheetState.requireOffset().roundToInt().dp
     } catch (e: IllegalStateException) {
@@ -62,8 +63,8 @@ fun AlbumScreen(
     Log.i("FRACT", "${bottomSheetHeight.value / screenHeight.value}")
     var fraction = 1f - (bottomSheetHeight.value / screenHeight.value + 0.053f) * 0.947f
     //Log.i("FRACT", "$fraction")
-    if(fraction > 1f) fraction = 1f
-    else if(fraction < 0f) fraction = 0f
+    if (fraction > 1f) fraction = 1f
+    else if (fraction < 0f) fraction = 0f
     BottomSheetScaffold(
         scaffoldState = bottomSheetScaffoldState,
         sheetContent = {
@@ -82,7 +83,7 @@ fun AlbumScreen(
 
     ) {
 
-        MainSheetContent(album, bottomSheetScaffoldState, scope, fraction, isLocked)
+        MainSheetContent(album, bottomSheetScaffoldState, scope, fraction)
 
     }
 }
@@ -94,12 +95,9 @@ fun MainSheetContent(
     sheetState: BottomSheetScaffoldState,
     scope: CoroutineScope,
     fraction: Float,
-    isLocked: MutableState<Boolean>
-) {
-    if (sheetState.bottomSheetState.currentValue == BottomSheetValue.Collapsed) {
 
+    ) {
 
-    }
 
     val screenHeight = LocalConfiguration.current.screenHeightDp.dp
 
@@ -149,7 +147,7 @@ fun MainSheetContent(
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(10.dp),
-
+            //modifier = Modifier.fillMaxWidth()
 
             ) {
             AsyncImage(
@@ -159,13 +157,15 @@ fun MainSheetContent(
                 contentDescription = stringResource(R.string.album_photo),
                 contentScale = ContentScale.FillBounds
             )
-            Text(
+            AutoResizedText(
                 text = album.name,
+                modifier = Modifier.padding(start = 20.dp, end = 20.dp),
                 style = MaterialTheme.typography.h2,
-                color = MaterialTheme.colors.onSecondary
+                color = MaterialTheme.colors.onSecondary,
+                isWidthOverflow = true
             )
             Text(
-                text = album.artists.joinToString(" ,") { it.name },
+                text = album.artists.joinToString(", ") { it.name },
                 style = MaterialTheme.typography.body1,
                 color = MaterialTheme.colors.onSecondary
             )
@@ -215,6 +215,7 @@ fun SheetContent(
         modifier = Modifier
             .heightIn(min = 500.dp, max = screenHeight)
             .fillMaxWidth()
+            .padding(bottom = 60.dp)
     ) {
         Spacer(
             modifier = Modifier

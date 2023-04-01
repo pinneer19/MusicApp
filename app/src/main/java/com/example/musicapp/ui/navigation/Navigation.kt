@@ -1,6 +1,8 @@
 package com.example.musicapp.ui.navigation
 
 //import com.example.musical.ui.loginScreen.LoginScreen
+import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.viewModelScope
@@ -21,6 +23,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun Navigation(
     navController: NavHostController,
@@ -37,10 +40,16 @@ fun Navigation(
             //LoginScreen()
         }
         composable(route = NavRoutes.Start.name) {
-            //val networkViewModel: NetworkViewModel = viewModel()
+            val isLoading by networkViewModel.isLoading.collectAsState()
+            val swipeRefreshState = rememberPullRefreshState(
+                refreshing = isLoading,
+                onRefresh = { networkViewModel.getApiAlbums() })
+
             MainScreen(
                 navController = navController,
                 networkUiState = networkViewModel.networkUiState,
+                pullRefreshState = swipeRefreshState,
+                refreshing = isLoading
             )
         }
         composable(route = NavRoutes.Settings.name) {

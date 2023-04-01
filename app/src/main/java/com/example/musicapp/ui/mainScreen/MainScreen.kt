@@ -1,26 +1,31 @@
 package com.example.musicapp.ui.mainScreen
 
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.pullrefresh.PullRefreshState
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavController
 import com.example.musicapp.network.NetworkUiState
 
 
 //@Preview(showSystemUi = true)
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun MainScreen(
     navController: NavController,
-    networkUiState: NetworkUiState
+    networkUiState: NetworkUiState,
+    pullRefreshState: PullRefreshState,
+    refreshing: Boolean
 ) {
-    when(networkUiState) {
+
+    when (networkUiState) {
         is NetworkUiState.Loading -> LoadingScreen()
-        is NetworkUiState.Success -> ResultScreen(networkUiState.albumsResponse, navController)
+        is NetworkUiState.Success -> ResultScreen(
+            networkUiState.albumsResponse,
+            navController,
+            pullRefreshState,
+            refreshing
+        )
         is NetworkUiState.Error -> ErrorScreen()
     }
 }

@@ -83,7 +83,6 @@ fun Navigation(
             }
             if (tracks != null) {
                 AlbumScreen(
-                    networkViewModel.musicRepository,
                     NetworkUiState.albumsResponse!!.albums.items[albumId],
                     tracks!!
                 )

@@ -44,8 +44,8 @@ import com.example.musicapp.ui.navigation.NavRoutes
 fun ResultScreen(
     albumsResponse: AlbumsResponse,
     navController: NavController,
-    pullRefreshState: PullRefreshState,
-    refreshing: Boolean,
+  //  pullRefreshState: PullRefreshState,
+    //refreshing: Boolean,
     modifier: Modifier = Modifier
 ) {
     Box(Modifier.fillMaxSize()) {
@@ -57,7 +57,7 @@ fun ResultScreen(
             columns = GridCells.Fixed(2),
             modifier = modifier
                 .fillMaxSize()
-                .pullRefresh(pullRefreshState)
+                //.pullRefresh(pullRefreshState)
 
         ) {
             itemsIndexed(
@@ -68,12 +68,12 @@ fun ResultScreen(
                     onAlbumClick = { navController.navigate(NavRoutes.Album.name + "/$index") })
             }
         }
-
+        /*
         PullRefreshIndicator(
             refreshing = refreshing,
             state = pullRefreshState,
             modifier = Modifier.align(Alignment.TopCenter)
-        )
+        )*/
 
     }
 }

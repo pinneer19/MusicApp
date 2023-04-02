@@ -7,6 +7,7 @@ import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectVerticalDragGestures
 import androidx.compose.foundation.layout.*
+
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
@@ -18,6 +19,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.graphics.*
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
@@ -25,7 +27,11 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.isUnspecified
+import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.example.musicapp.R
@@ -34,6 +40,8 @@ import com.example.musicapp.model.Album
 import com.example.musicapp.model.AutoResizedText
 import com.example.musicapp.model.Track
 import com.example.musicapp.model.TrackResponse
+import com.example.musicapp.ui.animation.animatedBackground
+import com.example.musicapp.ui.animation.infiniteTransition
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import kotlin.math.roundToInt
@@ -43,7 +51,6 @@ import kotlin.math.roundToInt
 @SuppressLint("CoroutineCreationDuringComposition")
 @Composable
 fun AlbumScreen(
-    musicRepository: MusicRepository,
     album: Album,
     tracks: TrackResponse,
 ) {
@@ -60,23 +67,17 @@ fun AlbumScreen(
         0.dp
     }
 
-    Log.i("FRACT", "${bottomSheetHeight.value / screenHeight.value}")
+
     var fraction = 1f - (bottomSheetHeight.value / screenHeight.value + 0.053f) * 0.947f
-    //Log.i("FRACT", "$fraction")
+
     if (fraction > 1f) fraction = 1f
     else if (fraction < 0f) fraction = 0f
     BottomSheetScaffold(
         scaffoldState = bottomSheetScaffoldState,
         sheetContent = {
-            SheetContent(tracks, bottomSheetScaffoldState.bottomSheetState, fraction)
+            SheetContent(tracks, fraction)
         },
         sheetElevation = 0.dp,
-        /*sheetShape = RoundedCornerShape(
-            bottomStart = 0.dp,
-            bottomEnd = 0.dp,
-            topStart = radius,
-            topEnd = radius
-        ),*/
         sheetPeekHeight = 500.dp,
         modifier = Modifier.fillMaxSize()
 
@@ -95,10 +96,7 @@ fun MainSheetContent(
     sheetState: BottomSheetScaffoldState,
     scope: CoroutineScope,
     fraction: Float,
-
-    ) {
-
-
+) {
     val screenHeight = LocalConfiguration.current.screenHeightDp.dp
 
     var offsetY by remember {
@@ -110,9 +108,7 @@ fun MainSheetContent(
         modifier = Modifier
             .fillMaxWidth()
             .height(screenHeight - 490.dp)
-            .background(
-                color = MaterialTheme.colors.secondary.copy(fraction)
-            )
+            .infiniteTransition(fraction)
             .graphicsLayer(
                 alpha = fraction,
                 scaleX = fraction,
@@ -149,7 +145,7 @@ fun MainSheetContent(
             verticalArrangement = Arrangement.spacedBy(10.dp),
             //modifier = Modifier.fillMaxWidth()
 
-            ) {
+        ) {
             AsyncImage(
                 model = ImageRequest.Builder(context = LocalContext.current)
                     .data(album.images[0].url)
@@ -177,8 +173,9 @@ fun MainSheetContent(
 @Composable
 fun TrackCard(
     track: Track,
-    modifier: Modifier
+    modifier: Modifier,
 ) {
+
     Card(
         modifier = modifier.padding(8.dp),
         shape = RectangleShape,
@@ -186,13 +183,27 @@ fun TrackCard(
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            Column() {
-                Text(text = track.name)
+            Column(modifier.weight(1f,)) {
+                Text(
+                    text = track.name,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                    style = MaterialTheme.typography.body1
+                )
                 Spacer(modifier = Modifier.height(10.dp))
-                Text(text = track.artists.joinToString(", ") { it.name })
+                Text(
+                    text = track.artists.joinToString(", ") { it.name },
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                    style = MaterialTheme.typography.subtitle1.copy(
+                        fontSize = 14.sp
+                    )
+                )
             }
-            Spacer(modifier = Modifier.weight(1f))
+
             Icon(
                 painter = painterResource(id = R.drawable.more),
                 contentDescription = stringResource(id = R.string.more)
@@ -206,7 +217,6 @@ fun TrackCard(
 @Composable
 fun SheetContent(
     tracks: TrackResponse,
-    sheetState: BottomSheetState,
     fraction: Float
 ) {
     val screenHeight = LocalConfiguration.current.screenHeightDp.dp
@@ -217,23 +227,19 @@ fun SheetContent(
             .fillMaxWidth()
             .padding(bottom = 60.dp)
     ) {
-        Spacer(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(15.dp)
-                .background(MaterialTheme.colors.secondary.copy(fraction))
-        )
+
         Box(
             contentAlignment = Alignment.Center,
             modifier = Modifier
                 .fillMaxWidth()
-                //.padding(bottom = 15.dp)
-                .background(MaterialTheme.colors.secondary.copy(fraction))
+                .infiniteTransition(fraction)
+
         ) {
 
             OutlinedButton(
                 onClick = { /*TODO*/ },
                 modifier = Modifier
+                    .padding(top = 15.dp, bottom = 15.dp)
                     .size(72.dp),
                 //.alpha(1f - fraction),
                 shape = CircleShape,
@@ -259,12 +265,7 @@ fun SheetContent(
             }
 
         }
-        Spacer(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(10.dp)
-                .background(MaterialTheme.colors.secondary.copy(fraction))
-        )
+
         LazyColumn(
             modifier = Modifier
                 .fillMaxWidth()

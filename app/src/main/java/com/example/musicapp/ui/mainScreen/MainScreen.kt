@@ -17,15 +17,18 @@ fun MainScreen(
     pullRefreshState: PullRefreshState,
     refreshing: Boolean
 ) {
-
     when (networkUiState) {
         is NetworkUiState.Loading -> LoadingScreen()
         is NetworkUiState.Success -> ResultScreen(
             networkUiState.albumsResponse,
             navController,
-            pullRefreshState,
-            refreshing
+            //pullRefreshState,
+            //refreshing
         )
-        is NetworkUiState.Error -> ErrorScreen()
+        is NetworkUiState.Error -> ErrorScreen(
+            pullRefreshState,
+            refreshing,
+            "Check your internet connection. Swipe down to refresh"
+        )
     }
 }

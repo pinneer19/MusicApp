@@ -14,6 +14,8 @@ val Gotham = FontFamily(
     Font(R.font.gotham_light, FontWeight.Light),
     Font(R.font.gotham_medium, FontWeight.Normal),
     Font(R.font.gotham_bold_italic, FontWeight.Bold),
+    Font(R.font.gotham_bold, FontWeight.ExtraBold),
+    Font(R.font.gotham_book, FontWeight.Thin)
 )
 
 
@@ -27,6 +29,16 @@ val Typography = Typography(
     h2 = TextStyle(
         fontFamily = Gotham,
         fontWeight = FontWeight.Bold,
+        fontSize = 22.sp
+    ),
+    h1 = TextStyle(
+        fontFamily = Gotham,
+        fontWeight = FontWeight.ExtraBold,
+        fontSize = 45.sp
+    ),
+    subtitle1 = TextStyle(
+        fontFamily = Gotham,
+        fontWeight = FontWeight.Thin,
         fontSize = 22.sp
     ),
     /* Other default text styles to override

@@ -56,15 +56,14 @@ class NetworkViewModel(/*private*/ val musicRepository: MusicRepository) : ViewM
                 //val networkMusicRepository = NetworkMusicRepository()
                 getSpotifyToken(musicRepository)
                 NetworkUiState.albumsResponse = musicRepository.getAlbums(NetworkUiState.token, 20)
-
                 _isLoading.value = false
                 NetworkUiState.Success(NetworkUiState.albumsResponse!!)
             } catch (e: IOException) {
-                _isLoading.value = false
+                _isLoading.emit(false)
                 Log.d("RESPONSE", e.message.toString())
                 NetworkUiState.Error
             } catch (e: HttpException) {
-                _isLoading.value = false
+                _isLoading.emit(false)
                 Log.d("RESPONSE", e.response()?.errorBody()?.string().toString())
                 NetworkUiState.Error
             }

@@ -6,6 +6,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavController
 import com.example.musicapp.network.NetworkUiState
+import com.example.musicapp.network.NetworkViewModel
 
 
 //@Preview(showSystemUi = true)
@@ -13,22 +14,24 @@ import com.example.musicapp.network.NetworkUiState
 @Composable
 fun MainScreen(
     navController: NavController,
-    networkUiState: NetworkUiState,
+    networkViewModel: NetworkViewModel,
     pullRefreshState: PullRefreshState,
     refreshing: Boolean
 ) {
-    when (networkUiState) {
+
+    when (val state = networkViewModel.networkUiState) {
         is NetworkUiState.Loading -> LoadingScreen()
         is NetworkUiState.Success -> ResultScreen(
-            networkUiState.albumsResponse,
+            state.albumsResponse,
             navController,
+            networkViewModel
             //pullRefreshState,
             //refreshing
         )
         is NetworkUiState.Error -> ErrorScreen(
             pullRefreshState,
             refreshing,
-            "Check your internet connection. Swipe down to refresh"
+            "Check your internet connection"
         )
     }
 }

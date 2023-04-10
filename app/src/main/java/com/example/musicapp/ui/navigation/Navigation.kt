@@ -1,6 +1,7 @@
 package com.example.musicapp.ui.navigation
 
 //import com.example.musical.ui.loginScreen.LoginScreen
+import android.util.Log
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.runtime.*
@@ -15,12 +16,16 @@ import com.example.musicapp.model.TrackResponse
 import com.example.musicapp.network.NetworkUiState
 import com.example.musicapp.network.NetworkViewModel
 import com.example.musicapp.ui.AlbumScreen.AlbumScreen
+import com.example.musicapp.ui.mainScreen.ErrorScreen
 import com.example.musicapp.ui.mainScreen.LoadingScreen
 import com.example.musicapp.ui.mainScreen.MainScreen
+import com.example.musicapp.ui.musicScreen.MusicScreen
+import com.example.musicapp.ui.theme.MusicAppTheme
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.net.UnknownHostException
 
 
 @OptIn(ExperimentalMaterialApi::class)
@@ -28,7 +33,6 @@ import kotlinx.coroutines.withContext
 fun Navigation(
     navController: NavHostController,
     networkViewModel: NetworkViewModel,
-    modifier: Modifier = Modifier,
 ) {
 
     NavHost(
@@ -40,14 +44,14 @@ fun Navigation(
             //LoginScreen()
         }
         composable(route = NavRoutes.Start.name) {
-            val isLoading by networkViewModel.isLoading.collectAsState()
+            val isLoading by networkViewModel.isLoadingAlbums.collectAsState()
             val swipeRefreshState = rememberPullRefreshState(
                 refreshing = isLoading,
                 onRefresh = { networkViewModel.getApiAlbums() })
 
             MainScreen(
                 navController = navController,
-                networkUiState = networkViewModel.networkUiState,
+                networkViewModel = networkViewModel,
                 pullRefreshState = swipeRefreshState,
                 refreshing = isLoading
             )
@@ -67,27 +71,27 @@ fun Navigation(
                 type = NavType.IntType
             })
         ) { navBackStackEntry ->
-            /*val album = navBackStackEntry.arguments?.getString("album")
-                ?.let { Gson().fromJson(it, Album::class.java) } ?: throw NullPointerException()
-            */
 
-            val albumId =
+           val albumId =
                 navBackStackEntry.arguments?.getInt("album") ?: throw NullPointerException()
-            val album = NetworkUiState.albumsResponse!!.albums.items[albumId]
-            var tracks by remember { mutableStateOf<TrackResponse?>(null) }
 
-            LaunchedEffect(Unit) {
-                withContext(Dispatchers.IO) {
-                    tracks = networkViewModel.musicRepository.getAlbumTracks(album.id, NetworkUiState.token)
-                }
-            }
-            if (tracks != null) {
                 AlbumScreen(
                     NetworkUiState.albumsResponse!!.albums.items[albumId],
-                    tracks!!
+                    NetworkUiState.trackResponse!!,
+                    navController
                 )
-            }
-            else LoadingScreen()
+        }
+        composable(
+            route = NavRoutes.Track.name + "/{track}",
+            arguments = listOf(navArgument("track") {
+                type = NavType.IntType
+            })
+        ) { navBackStackEntry ->
+            val trackId =
+                navBackStackEntry.arguments?.getInt("track") ?: throw NullPointerException()
+
+            MusicScreen(NetworkUiState.trackResponse!!.items[trackId])
+
         }
     }
 }

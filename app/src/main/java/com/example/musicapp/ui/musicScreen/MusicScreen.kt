@@ -27,17 +27,20 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.example.musicapp.R
 import com.example.musicapp.data.DataSource
+import com.example.musicapp.model.Track
+import com.example.musicapp.model.TrackResponse
 
 
-@Preview(showSystemUi = true)
+//@Preview(showSystemUi = true)
 @Composable
 fun MusicScreen(
-    modifier: Modifier = Modifier
+    track: Track,
+    modifier: Modifier = Modifier,
 ) {
     val image = DataSource.trackImageId
-    val title = DataSource.trackTitleId
-    val author = DataSource.trackAuthorId
-    val duration = 75000
+    val title = track.name
+    val author = track.artists.joinToString(", ") { it.name }
+    val duration = track.duration_ms
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier.fillMaxSize()

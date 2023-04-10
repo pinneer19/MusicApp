@@ -23,8 +23,8 @@ import com.example.musicapp.R
 @Composable
 fun TrackDescription(
     @DrawableRes trackImage: Int,
-    @StringRes trackTitle: Int,
-    @StringRes trackAuthor: Int,
+    trackTitle: String,
+    trackAuthor: String,
     iconSize: Pair<Dp, Dp>,
     modifier: Modifier = Modifier
 ) {
@@ -50,8 +50,8 @@ fun TrackDescription(
         // Author, title
         Column(verticalArrangement = Arrangement.spacedBy(10.dp))
         {
-            Text(text = stringResource(id = trackTitle))
-            Text(text = stringResource(id = trackAuthor))
+            Text(text = trackTitle)
+            Text(text = trackAuthor)
         }
         Spacer(modifier = Modifier.weight(1f))
         // Sharing button

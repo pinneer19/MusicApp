@@ -9,10 +9,12 @@ import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.core.view.WindowCompat
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.rememberNavController
 import com.example.musicapp.data.BottomNavItems
 import com.example.musicapp.network.NetworkViewModel
+import com.example.musicapp.ui.AlbumScreen.BottomSheet
 import com.example.musicapp.ui.navigation.BottomBarNavigation
 import com.example.musicapp.ui.navigation.Navigation
 import com.example.musicapp.ui.theme.MusicAppTheme
@@ -28,6 +30,7 @@ class MainActivity : ComponentActivity() {
     @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        //WindowCompat.setDecorFitsSystemWindows(window, false)
         auth = Firebase.auth
         setContent {
             MusicAppTheme {
@@ -35,6 +38,7 @@ class MainActivity : ComponentActivity() {
 
                 val navController = rememberNavController()
 
+              //  BottomSheet()
                 Scaffold(
                     bottomBar = {
                         BottomBarNavigation(

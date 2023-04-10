@@ -1,10 +1,7 @@
 package com.example.musicapp.network
 
 import android.util.Log
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.*
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.APPLICATION_KEY
@@ -16,11 +13,15 @@ import com.example.musicapp.data.MusicRepository
 import com.example.musicapp.data.NetworkMusicRepository
 import com.example.musicapp.model.AlbumsResponse
 import com.example.musicapp.model.TokenResponse
+import com.example.musicapp.model.TrackResponse
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import retrofit2.*
 import java.io.IOException
+import java.net.UnknownHostException
 
 sealed interface NetworkUiState {
     data class Success(val albumsResponse: AlbumsResponse) : NetworkUiState
@@ -29,6 +30,7 @@ sealed interface NetworkUiState {
     companion object {
         var token: String = ""
         var albumsResponse: AlbumsResponse? = null
+        var trackResponse: TrackResponse? = null
     }
 }
 
@@ -37,9 +39,11 @@ class NetworkViewModel(/*private*/ val musicRepository: MusicRepository) : ViewM
     var networkUiState: NetworkUiState by mutableStateOf(NetworkUiState.Loading)
         private set
 
-    private val _isLoading = MutableStateFlow(false)
-    val isLoading = _isLoading.asStateFlow()
+    private val _isLoadingAlbums = MutableStateFlow(false)
+    val isLoadingAlbums = _isLoadingAlbums.asStateFlow()
 
+    private val _isLoadingAlbumInfo = MutableStateFlow(false)
+    val isLoadingAlbumInfo = _isLoadingAlbumInfo.asStateFlow()
 
     init {
         getApiAlbums()
@@ -51,25 +55,44 @@ class NetworkViewModel(/*private*/ val musicRepository: MusicRepository) : ViewM
     fun getApiAlbums() {
 
         viewModelScope.launch {
-            _isLoading.value = true
+            _isLoadingAlbums.value = true
             networkUiState = try {
                 //val networkMusicRepository = NetworkMusicRepository()
                 getSpotifyToken(musicRepository)
                 NetworkUiState.albumsResponse = musicRepository.getAlbums(NetworkUiState.token, 20)
-                _isLoading.value = false
+                _isLoadingAlbums.value = false
                 NetworkUiState.Success(NetworkUiState.albumsResponse!!)
             } catch (e: IOException) {
-                _isLoading.emit(false)
+                _isLoadingAlbums.emit(false)
                 Log.d("RESPONSE", e.message.toString())
                 NetworkUiState.Error
             } catch (e: HttpException) {
-                _isLoading.emit(false)
+                _isLoadingAlbums.emit(false)
                 Log.d("RESPONSE", e.response()?.errorBody()?.string().toString())
                 NetworkUiState.Error
             }
         }
     }
 
+
+   /* fun getApiAlbumInfo() {
+
+
+        viewModelScope.launch {
+            try {
+                withContext(Dispatchers.IO) {
+                    tracks = networkViewModel.musicRepository.getAlbumTracks(
+                        album.id,
+                        NetworkUiState.token
+                    )
+                }
+            } catch (ex: UnknownHostException) {
+                //ErrorScreen(pullRefreshState = , refreshing = , errorMessage = )
+            }
+        }
+
+    }
+*/
     private suspend fun getSpotifyToken(networkMusicRepository: MusicRepository) {
         val responseCall = networkMusicRepository.getToken()
         NetworkUiState.token = "Bearer " + responseCall.accessToken

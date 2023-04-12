@@ -16,22 +16,26 @@ object BottomNavItems {
         BottomNavItem(
             name = "Home",
             route = NavRoutes.Start.name,
-            icon = R.drawable.home
+            icon = R.drawable.outline_home,
+            icon_focused = R.drawable.home
         ),
         BottomNavItem(
             name = "Favourite",
             route = NavRoutes.Favourites.name,
-            icon = R.drawable.favourite
+            icon = R.drawable.favourite,
+            icon_focused = R.drawable.filled_favourite,
         ),
         BottomNavItem(
             name = "Playlists",
             route = NavRoutes.Playlists.name,
-            icon = R.drawable.playlist
+            icon = R.drawable.outline_library_music,
+            icon_focused = R.drawable.playlist
         ),
         BottomNavItem(
             name = "Settings",
             route = NavRoutes.Settings.name,
-            icon = R.drawable.settings
+            icon = R.drawable.outline_settings_24,
+            icon_focused = R.drawable.settings
         )
     )
 }

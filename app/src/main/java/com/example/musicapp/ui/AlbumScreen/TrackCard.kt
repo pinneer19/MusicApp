@@ -21,14 +21,14 @@ import com.example.musicapp.model.Track
 @Composable
 fun TrackCard(
     track: Track,
-    onTrackClicked: (Track) -> Unit,
+    onTrackClicked: () -> Unit,
     modifier: Modifier,
 ) {
 
     Card(
         modifier = modifier
             .clickable {
-                onTrackClicked(track)
+                onTrackClicked()
             }
             .padding(8.dp),
         shape = RectangleShape,

@@ -4,11 +4,15 @@ import android.annotation.SuppressLint
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.material.*
 import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 import androidx.core.view.WindowCompat
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.rememberNavController
@@ -26,11 +30,12 @@ import com.google.firebase.ktx.Firebase
 class MainActivity : ComponentActivity() {
 
     private lateinit var auth: FirebaseAuth
-    @OptIn(ExperimentalMaterialApi::class)
+
+
     @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        //WindowCompat.setDecorFitsSystemWindows(window, false)
+
         auth = Firebase.auth
         setContent {
             MusicAppTheme {
@@ -38,13 +43,14 @@ class MainActivity : ComponentActivity() {
 
                 val navController = rememberNavController()
 
-              //  BottomSheet()
+
                 Scaffold(
                     bottomBar = {
+
                         BottomBarNavigation(
                             items = BottomNavItems.list,
                             navController = navController,
-                            onItemClicked = { navController.navigate(it.route) }
+                            modifier = Modifier.fillMaxWidth()
                         )
                     },
                     scaffoldState = rememberScaffoldState()

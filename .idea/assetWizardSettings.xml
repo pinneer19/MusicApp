@@ -23,7 +23,7 @@
                                 <PersistentState>
                                   <option name="values">
                                     <map>
-                                      <entry key="url" value="file:/$PROJECT_DIR$/../../java/icons/material/materialicons/cancel/baseline_cancel_24.xml" />
+                                      <entry key="url" value="file:/$PROJECT_DIR$/../../java/icons/material/materialicons/play_arrow/baseline_play_arrow_24.xml" />
                                     </map>
                                   </option>
                                 </PersistentState>
@@ -33,7 +33,7 @@
                         </option>
                         <option name="values">
                           <map>
-                            <entry key="outputName" value="error_icon" />
+                            <entry key="outputName" value="play_arrow" />
                             <entry key="sourceFile" value="C:\AndroidStudioProjects\MusicApp" />
                           </map>
                         </option>

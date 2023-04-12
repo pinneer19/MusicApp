@@ -18,6 +18,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.example.musicapp.model.Track
 import com.example.musicapp.model.TrackResponse
 import com.example.musicapp.ui.navigation.NavRoutes
 
@@ -25,7 +26,7 @@ import com.example.musicapp.ui.navigation.NavRoutes
 fun SheetContent(
     tracks: TrackResponse,
     navController: NavController,
-    onTrackClicked: (Boolean) -> Unit,
+    onTrackClicked: (Pair<Track, Int>) -> Unit,
 ) {
     val screenHeight = LocalConfiguration.current.screenHeightDp.dp
 
@@ -37,68 +38,45 @@ fun SheetContent(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
 
-        Surface(
-            color = Color.Transparent
+
+        OutlinedButton(
+            onClick = { /*TODO*/ },
+            modifier = Modifier
+                .padding(bottom = 15.dp)
+                .size(63.dp),
+            shape = CircleShape,
+            contentPadding = PaddingValues(12.dp),
+            colors = ButtonDefaults.outlinedButtonColors(
+                backgroundColor = Color.Black
+            )
         ) {
-
-            OutlinedButton(
-                onClick = { /*TODO*/ },
+            Icon(
                 modifier = Modifier
-                    .padding(top = 15.dp, bottom = 15.dp)
-                    .size(72.dp),
-                shape = CircleShape,
-                contentPadding = PaddingValues(12.dp),
-                elevation = ButtonDefaults.elevation(4.dp),
-                colors = ButtonDefaults.outlinedButtonColors(
-                    backgroundColor = Color.Black
-                )
-            ) {
-                Icon(
-                    modifier = Modifier
-                        .fillMaxSize(),
-                    imageVector = Icons.Filled.PlayArrow,
-                    contentDescription = "Play album",
-                    tint = Color.Green
-                )
-
-                // If the song is loaded, pause the actual song
-                /* if (songLoaded) {
-                     pauseTheSong(context = context)
-                 }*/
-            }
-
+                    .fillMaxSize(),
+                imageVector = Icons.Filled.PlayArrow,
+                contentDescription = "Play album",
+                tint = Color.Green
+            )
         }
+
+
 
         LazyColumn(
             modifier = Modifier
                 .fillMaxWidth()
-                .clip(RoundedCornerShape(topStart = 30.dp, topEnd = 30.dp))
+                //.clip(RoundedCornerShape(topStart = 30.dp, topEnd = 30.dp))
         ) {
 
-            /*
-            * itemsIndexed(
-                items = albumsResponse.albums.items,
-                key = { _, item -> item.id })
-            { index: Int, item ->
-                AlbumCard(
-                    album = item,
-                    onAlbumClick = { navController.navigate(NavRoutes.Album.name + "/$index") })
-            }
-            * */
 
             itemsIndexed(
                 items = tracks.items,
                 key = { _, item -> item.href })
             { index: Int, item ->
-                /*AlbumCard(
-                    album = item,
-                    onAlbumClick = { navController.navigate(NavRoutes.Album.name + "/$index") })*/
+
                 TrackCard(
                     track = item,
-                    onTrackClicked =  {
-                        onTrackClicked(true)
-                        ///BottomTrack()
-                        navController.navigate(NavRoutes.Track.name + "/$index")
+                    onTrackClicked = {
+                        onTrackClicked(item to index)
                     },
                     modifier = Modifier.fillMaxWidth()
                 )

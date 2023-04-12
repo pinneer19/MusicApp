@@ -18,7 +18,11 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.example.musicapp.R
@@ -34,7 +38,10 @@ fun MainSheetContent(
     sheetState: BottomSheetScaffoldState,
     scope: CoroutineScope,
     fraction: Float,
+    screenHeight: Dp,
 ) {
+
+
     var offsetY by remember {
         mutableStateOf(0f)
     }
@@ -42,12 +49,13 @@ fun MainSheetContent(
         contentAlignment = Alignment.Center,
         modifier = Modifier
             .fillMaxWidth()
-            //.height(if (fraction >= 0.6f) (screenHeight - 490.dp) * fraction else (screenHeight - 490.dp) * 0.6f)
+            .height(screenHeight - 500.dp)
             .background(
                 Brush.verticalGradient(
-                    colors = listOf(MaterialTheme.colors.primary, Color.White),
+                    colors = listOf(MaterialTheme.colors.secondaryVariant,MaterialTheme.colors.secondary, Color.White),
                 ),
                 alpha = fraction
+                //Color.White
             )
             .graphicsLayer(
                 alpha = fraction,
@@ -74,6 +82,7 @@ fun MainSheetContent(
                             }
                         }
                     }
+                    //if(!(sheetState.bottomSheetState.isExpanded && y < 0) && !(sheetState.bottomSheetState.isCollapsed && y > 0))
                     offsetY += dragAmount
 
                 }
@@ -83,28 +92,19 @@ fun MainSheetContent(
     ) {
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(10.dp),
-            //modifier = Modifier.fillMaxWidth()
+            verticalArrangement = Arrangement.Center,
+            modifier = Modifier.fillMaxWidth()
 
         ) {
-            AsyncImage(
-                model = ImageRequest.Builder(context = LocalContext.current)
-                    .data(album.images[0].url)
-                    .build(),
-                contentDescription = stringResource(R.string.album_photo),
-                contentScale = ContentScale.FillBounds
-            )
-            AutoResizedText(
-                text = album.name,
-                modifier = Modifier.padding(start = 20.dp, end = 20.dp),
-                style = MaterialTheme.typography.h2,
-                color = MaterialTheme.colors.onSecondary,
-                isWidthOverflow = true
-            )
+            ImageCard(album = album, modifier = Modifier.fillMaxWidth())
+
             Text(
+                modifier = Modifier.fillMaxWidth().padding(top = 15.dp, start = 20.dp, end = 20.dp),
+                textAlign = TextAlign.Center,
                 text = album.artists.joinToString(", ") { it.name },
-                style = MaterialTheme.typography.body1,
-                color = MaterialTheme.colors.onSecondary
+                style = MaterialTheme.typography.body1.copy(fontSize = 14.sp, letterSpacing = 2.sp),
+                color = MaterialTheme.colors.onSecondary,
+                overflow = TextOverflow.Ellipsis
             )
 
         }

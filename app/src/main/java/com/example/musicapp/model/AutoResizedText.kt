@@ -33,7 +33,7 @@ fun AutoResizedText(
         mutableStateOf(false)
     }
 
-    val defaultFontSize = MaterialTheme.typography.body1.fontSize
+    val defaultFontSize = style.fontSize
 
 
     Text(
@@ -65,14 +65,12 @@ fun AutoResizedText(
                     }
                 }
                 true -> {
-                    Log.i("OVERFLOW", "NO OK")
                     if (result.didOverflowWidth) {
                         if (style.fontSize.isUnspecified) {
                             resizedTextStyle = resizedTextStyle.copy(
                                 fontSize = defaultFontSize
                             )
                         }
-                        Log.i("OVERFLOW", "NOW OK")
                         resizedTextStyle = resizedTextStyle.copy(
                             fontSize = resizedTextStyle.fontSize * 0.9
                         )

@@ -104,27 +104,23 @@ fun ResultScreen(
 
 }
 
+
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun AlbumCard(
     album: Album,
     onAlbumClick: (Album) -> Unit,
     modifier: Modifier = Modifier,
-    backColor: Color = MaterialTheme.colors.primary
 ) {
     Card(
         modifier = modifier
-            .clickable(
-                interactionSource = createMutableInteractionSource(),
-                indication = createIndication(),
-                onClick = { onAlbumClick(album) }
-            )
             .shadow(
                 ambientColor = Color.Black,
                 spotColor = Color.Black,
                 elevation = 7.dp,
                 shape = RoundedCornerShape(9.dp),
             ),
-        //elevation = 15.dp,
+        onClick = { onAlbumClick(album) },
         shape = RoundedCornerShape(9.dp),
     ) {
         // 640x640 image will be casted to 500x500
@@ -161,14 +157,4 @@ fun AlbumImage(
         placeholder = painterResource(R.drawable.loading_img),
         contentDescription = stringResource(R.string.album_photo)
     )
-}
-
-@Composable
-private fun createIndication(bounded: Boolean = true, color: Color = Color.Green): Indication {
-    return rememberRipple(bounded = bounded, color = color)
-}
-
-@Composable
-private fun createMutableInteractionSource(): MutableInteractionSource = remember {
-    MutableInteractionSource()
 }

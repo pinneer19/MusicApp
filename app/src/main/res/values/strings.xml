@@ -16,4 +16,5 @@
     <string name="loading_failed">Error of loading</string>
     <string name="album_photo">Album photo</string>
     <string name="error_message">Oh no!</string>
+    <string name="play_audio">Play audio</string>
 </resources>

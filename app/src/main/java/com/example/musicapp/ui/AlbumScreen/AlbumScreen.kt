@@ -3,6 +3,8 @@ package com.example.musicapp.ui.AlbumScreen
 import android.annotation.SuppressLint
 import android.util.Log
 import androidx.compose.animation.*
+import androidx.compose.animation.core.MutableTransitionState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectVerticalDragGestures
@@ -10,6 +12,7 @@ import androidx.compose.foundation.layout.*
 
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
@@ -39,6 +42,7 @@ import com.example.musicapp.model.AutoResizedText
 import com.example.musicapp.model.Track
 import com.example.musicapp.model.TrackResponse
 import com.example.musicapp.ui.mainScreen.BottomTrack
+import com.example.musicapp.ui.musicScreen.TrackDescription
 import com.example.musicapp.ui.navigation.NavRoutes
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
@@ -57,10 +61,6 @@ fun AlbumScreen(
         modifier = Modifier.fillMaxSize()
     ) {
         val scope = rememberCoroutineScope()
-
-        var trackChosen by remember {
-            mutableStateOf(false)
-        }
         val bottomSheetScaffoldState = rememberBottomSheetScaffoldState(
             bottomSheetState = rememberBottomSheetState(BottomSheetValue.Collapsed),
         )
@@ -72,16 +72,14 @@ fun AlbumScreen(
         } catch (e: IllegalStateException) {
             0.dp
         }
-
         var fraction = 1f - (bottomSheetHeight.value / screenHeight.value + 0.047088f) * 0.952912f
-        Log.i("FRACTION", ":\t ${
-            bottomSheetHeight.value / screenHeight.value
-
-        }")
         if (fraction > 1f) fraction = 1f
         else if (fraction < 0f) fraction = 0f
 
 
+        var trackChosen by remember {
+            mutableStateOf<Pair<Track?, Int>>(null to 0)
+        }
 
         BottomSheetScaffold(
 
@@ -96,7 +94,28 @@ fun AlbumScreen(
             sheetPeekHeight = 500.dp,
             modifier = Modifier.fillMaxWidth()
         ) {
-            MainSheetContent(album, bottomSheetScaffoldState, scope, fraction)
+            MainSheetContent(album, bottomSheetScaffoldState, scope, fraction, screenHeight)
+        }
+
+        AnimatedVisibility(
+            modifier = Modifier
+                .fillMaxWidth()
+                .align(Alignment.BottomCenter),
+            visible = trackChosen.first != null,
+            enter = slideInVertically(
+                initialOffsetY = { it / 2 },
+                animationSpec = tween(500)
+            )
+        ) {
+
+            BottomTrack(
+                track = trackChosen.first!!,
+                trackIndex = trackChosen.second,
+                navController = navController,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(MaterialTheme.colors.onPrimary)
+            )
         }
 
     }

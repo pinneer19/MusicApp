@@ -25,7 +25,6 @@ import com.example.musicapp.ui.navigation.NavRoutes
 @Composable
 fun SheetContent(
     tracks: TrackResponse,
-    navController: NavController,
     onTrackClicked: (Pair<Track, Int>) -> Unit,
 ) {
     val screenHeight = LocalConfiguration.current.screenHeightDp.dp

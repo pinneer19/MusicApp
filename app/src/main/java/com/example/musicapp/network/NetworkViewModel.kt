@@ -57,42 +57,22 @@ class NetworkViewModel(/*private*/ val musicRepository: MusicRepository) : ViewM
         viewModelScope.launch {
             _isLoadingAlbums.value = true
             networkUiState = try {
-                //val networkMusicRepository = NetworkMusicRepository()
+
                 getSpotifyToken(musicRepository)
                 NetworkUiState.albumsResponse = musicRepository.getAlbums(NetworkUiState.token, 20)
                 _isLoadingAlbums.value = false
                 NetworkUiState.Success(NetworkUiState.albumsResponse!!)
+
             } catch (e: IOException) {
                 _isLoadingAlbums.emit(false)
-                Log.d("RESPONSE", e.message.toString())
                 NetworkUiState.Error
             } catch (e: HttpException) {
                 _isLoadingAlbums.emit(false)
-                Log.d("RESPONSE", e.response()?.errorBody()?.string().toString())
                 NetworkUiState.Error
             }
         }
     }
 
-
-   /* fun getApiAlbumInfo() {
-
-
-        viewModelScope.launch {
-            try {
-                withContext(Dispatchers.IO) {
-                    tracks = networkViewModel.musicRepository.getAlbumTracks(
-                        album.id,
-                        NetworkUiState.token
-                    )
-                }
-            } catch (ex: UnknownHostException) {
-                //ErrorScreen(pullRefreshState = , refreshing = , errorMessage = )
-            }
-        }
-
-    }
-*/
     private suspend fun getSpotifyToken(networkMusicRepository: MusicRepository) {
         val responseCall = networkMusicRepository.getToken()
         NetworkUiState.token = "Bearer " + responseCall.accessToken

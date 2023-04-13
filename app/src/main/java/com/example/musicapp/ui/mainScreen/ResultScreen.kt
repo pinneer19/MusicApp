@@ -48,8 +48,8 @@ import java.net.UnknownHostException
 @Composable
 fun ResultScreen(
     albumsResponse: AlbumsResponse,
-    navController: NavController,
     viewModel: NetworkViewModel,
+    onNavigateClick: (Int) -> Unit,
     modifier: Modifier = Modifier
 ) {
     val scaffoldState: ScaffoldState = rememberScaffoldState()
@@ -78,6 +78,7 @@ fun ResultScreen(
                     onAlbumClick = {
                         val album = albumsResponse.albums.items[index]
                         coroutineScope.launch {
+                            Log.i("INDEX", "OK1")
                             try {
                                 withContext(Dispatchers.IO) {
                                     NetworkUiState.trackResponse = viewModel.musicRepository.getAlbumTracks(
@@ -85,7 +86,9 @@ fun ResultScreen(
                                         NetworkUiState.token
                                     )
                                 }
-                                navController.navigate(NavRoutes.Album.name + "/$index")
+                                Log.i("INDEX", "OK2")
+                                onNavigateClick(index)
+                                //navController.navigate(NavRoutes.Album.name + "/$index")
                             }
                             catch (ex: UnknownHostException) {
                                 scaffoldState.snackbarHostState.showSnackbar(

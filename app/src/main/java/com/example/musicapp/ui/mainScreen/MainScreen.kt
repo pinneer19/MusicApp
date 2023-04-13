@@ -13,21 +13,21 @@ import com.example.musicapp.network.NetworkViewModel
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun MainScreen(
-    navController: NavController,
     networkViewModel: NetworkViewModel,
+    onNavigateClick: (Int) -> Unit,
     pullRefreshState: PullRefreshState,
     refreshing: Boolean
 ) {
 
     when (val state = networkViewModel.networkUiState) {
         is NetworkUiState.Loading -> LoadingScreen()
+
         is NetworkUiState.Success -> ResultScreen(
             state.albumsResponse,
-            navController,
-            networkViewModel
-            //pullRefreshState,
-            //refreshing
+            networkViewModel,
+            onNavigateClick = onNavigateClick
         )
+
         is NetworkUiState.Error -> ErrorScreen(
             pullRefreshState,
             refreshing,

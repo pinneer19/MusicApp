@@ -28,11 +28,10 @@ import kotlinx.coroutines.launch
 @Composable
 fun AddItem(
     item: BottomNavItem,
-    destination: NavDestination?,
+    route: String?,
     navController: NavHostController
 ) {
-    //val selected = currentDestination?.hierarchy?.any { it.route == screen.route } == true
-    val selected = item.route == destination?.route
+    val selected = item.route == route
     val background =
         if (selected) MaterialTheme.colors.primary.copy(alpha = 0.6f) else Color.Transparent
 

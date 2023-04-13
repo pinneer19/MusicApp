@@ -20,7 +20,8 @@ import com.example.musicapp.data.BottomNavItems
 import com.example.musicapp.network.NetworkViewModel
 import com.example.musicapp.ui.AlbumScreen.BottomSheet
 import com.example.musicapp.ui.navigation.BottomBarNavigation
-import com.example.musicapp.ui.navigation.Navigation
+
+import com.example.musicapp.ui.navigation.graphs.RootNavigationGraph
 import com.example.musicapp.ui.theme.MusicAppTheme
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 import com.google.firebase.auth.FirebaseAuth
@@ -39,27 +40,7 @@ class MainActivity : ComponentActivity() {
         auth = Firebase.auth
         setContent {
             MusicAppTheme {
-                val viewModel: NetworkViewModel = viewModel(factory = NetworkViewModel.Factory)
-
-                val navController = rememberNavController()
-
-
-                Scaffold(
-                    bottomBar = {
-
-                        BottomBarNavigation(
-                            items = BottomNavItems.list,
-                            navController = navController,
-                            modifier = Modifier.fillMaxWidth()
-                        )
-                    },
-                    scaffoldState = rememberScaffoldState()
-                ) {
-                    Navigation(
-                        navController = navController,
-                        networkViewModel = viewModel
-                    )
-                }
+                RootNavigationGraph(navController = rememberNavController())
             }
         }
     }

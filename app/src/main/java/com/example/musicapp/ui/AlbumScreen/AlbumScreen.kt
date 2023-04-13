@@ -55,7 +55,7 @@ import kotlin.math.roundToInt
 fun AlbumScreen(
     album: Album,
     tracks: TrackResponse,
-    navController: NavController
+    onClick: (Int) -> Unit
 ) {
     Box(
         modifier = Modifier.fillMaxSize()
@@ -85,7 +85,7 @@ fun AlbumScreen(
 
             scaffoldState = bottomSheetScaffoldState,
             sheetContent = {
-                SheetContent(tracks, navController) {
+                SheetContent(tracks) {
                     trackChosen = it
                 }
             },
@@ -111,7 +111,7 @@ fun AlbumScreen(
             BottomTrack(
                 track = trackChosen.first!!,
                 trackIndex = trackChosen.second,
-                navController = navController,
+                onClick = onClick,
                 modifier = Modifier
                     .fillMaxWidth()
                     .background(MaterialTheme.colors.onPrimary)

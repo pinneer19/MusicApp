@@ -1,5 +1,6 @@
 package com.example.musicapp.ui.navigation.graphs
 
+import MusicViewModel
 import android.util.Log
 import androidx.compose.foundation.layout.Box
 import androidx.compose.material.ExperimentalMaterialApi
@@ -9,11 +10,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.platform.LocalContext
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.*
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
 import com.example.musicapp.data.BottomNavItems
+import com.example.musicapp.data.MusicRepositoryManager
 import com.example.musicapp.network.NetworkUiState
 import com.example.musicapp.network.NetworkViewModel
 import com.example.musicapp.ui.AlbumScreen.AlbumScreen
@@ -25,7 +29,11 @@ import com.example.musicapp.ui.navigation.NavRoutes
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun HomeNavGraph(navController: NavHostController, networkViewModel: NetworkViewModel) {
+fun HomeNavGraph(
+    navController: NavHostController,
+    networkViewModel: NetworkViewModel,
+    musicViewModel: MusicViewModel
+) {
     NavHost(
         navController = navController,
         route = Graph.HOME,
@@ -65,8 +73,11 @@ fun HomeNavGraph(navController: NavHostController, networkViewModel: NetworkView
 
             val albumId =
                 navBackStackEntry.arguments?.getInt("album") ?: throw NullPointerException()
+
+            musicViewModel.updatePlaylist(NetworkUiState.trackResponse!!)
             AlbumScreen(
-                NetworkUiState.albumsResponse!!.albums.items[albumId],
+                musicViewModel,
+                NetworkUiState.playlistsResponse!![albumId],
                 NetworkUiState.trackResponse!!,
                 onClick = { trackIndex ->
                     navController.navigate(NavRoutes.Track.name + "/$trackIndex")
@@ -82,7 +93,11 @@ fun HomeNavGraph(navController: NavHostController, networkViewModel: NetworkView
             val trackId =
                 navBackStackEntry.arguments?.getInt("track") ?: throw NullPointerException()
 
-            MusicScreen(NetworkUiState.trackResponse!!.items[trackId])
+            MusicScreen(
+                //track = NetworkUiState.trackResponse!!.items[trackId],
+                track = NetworkUiState.trackResponse!![trackId],
+                onCollapseClicked = { navController.popBackStack() }
+            )
         }
     }
 }

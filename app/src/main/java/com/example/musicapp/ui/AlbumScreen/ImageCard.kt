@@ -24,6 +24,7 @@ import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.example.musicapp.R
 import com.example.musicapp.model.Album
+import com.example.musicapp.model.Playlist
 
 
 @Composable
@@ -73,7 +74,7 @@ fun Modifier.shadow(
 
 @Composable
 fun ImageCard(
-    album: Album,
+    playlist: Playlist,
     modifier: Modifier = Modifier
 ) {
     Card(
@@ -93,7 +94,7 @@ fun ImageCard(
         Box(modifier = Modifier.fillMaxSize()) {
             AsyncImage(
                 model = ImageRequest.Builder(context = LocalContext.current)
-                    .data(album.images[0].url)
+                    .data(playlist.pictureBig)
                     .build(),
                 contentDescription = stringResource(R.string.album_photo),
                 contentScale = ContentScale.FillBounds,
@@ -118,7 +119,7 @@ fun ImageCard(
                     .fillMaxWidth()
                     .align(Alignment.BottomStart)
                     .padding(all = 12.dp),
-                text = album.name,
+                text = playlist.title,
                 style = MaterialTheme.typography.h2.copy(fontSize = 16.sp),
                 color = MaterialTheme.colors.onPrimary
             )

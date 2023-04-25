@@ -12,7 +12,7 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
-import com.example.musicapp.model.TrackResponse
+
 import com.example.musicapp.network.NetworkUiState
 import com.example.musicapp.network.NetworkViewModel
 import com.example.musicapp.ui.AlbumScreen.AlbumScreen

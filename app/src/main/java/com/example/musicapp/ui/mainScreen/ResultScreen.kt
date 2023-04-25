@@ -1,35 +1,23 @@
 package com.example.musicapp.ui.mainScreen
 
+import MusicViewModel
 import android.annotation.SuppressLint
 import android.util.Log
-import androidx.compose.foundation.Indication
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Close
-import androidx.compose.material.pullrefresh.PullRefreshIndicator
-import androidx.compose.material.pullrefresh.PullRefreshState
-import androidx.compose.material.pullrefresh.pullRefresh
-import androidx.compose.material.ripple.rememberRipple
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.draw.shadow
-import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import coil.size.Scale
@@ -37,7 +25,6 @@ import com.example.musicapp.R
 import com.example.musicapp.model.*
 import com.example.musicapp.network.NetworkUiState
 import com.example.musicapp.network.NetworkViewModel
-import com.example.musicapp.ui.navigation.NavRoutes
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -47,8 +34,9 @@ import java.net.UnknownHostException
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
 fun ResultScreen(
-    albumsResponse: AlbumsResponse,
+    playlistsResponse: List<Playlist>,
     viewModel: NetworkViewModel,
+
     onNavigateClick: (Int) -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -69,26 +57,21 @@ fun ResultScreen(
 
         ) {
             itemsIndexed(
-                items = albumsResponse.albums.items,
+                items = playlistsResponse,
                 key = { _, item -> item.id })
             { index: Int, item ->
-
-                AlbumCard(
-                    album = item,
+                PlaylistCard(
+                    playlist = item,
                     onAlbumClick = {
-                        val album = albumsResponse.albums.items[index]
+                        val playlist = playlistsResponse[index]
                         coroutineScope.launch {
-                            Log.i("INDEX", "OK1")
                             try {
                                 withContext(Dispatchers.IO) {
-                                    NetworkUiState.trackResponse = viewModel.musicRepository.getAlbumTracks(
-                                        album.id,
-                                        NetworkUiState.token
+                                    viewModel.getPlaylistTracks(
+                                        playlist.id.toString(),
                                     )
                                 }
-                                Log.i("INDEX", "OK2")
                                 onNavigateClick(index)
-                                //navController.navigate(NavRoutes.Album.name + "/$index")
                             }
                             catch (ex: UnknownHostException) {
                                 scaffoldState.snackbarHostState.showSnackbar(
@@ -96,23 +79,20 @@ fun ResultScreen(
                                     actionLabel = "OK"
                                 )
                             }
-
                         }
                     }
                 )
             }
         }
     }
-    
-
 }
 
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun AlbumCard(
-    album: Album,
-    onAlbumClick: (Album) -> Unit,
+fun PlaylistCard(
+    playlist: Playlist,
+    onAlbumClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Card(
@@ -123,7 +103,7 @@ fun AlbumCard(
                 elevation = 7.dp,
                 shape = RoundedCornerShape(9.dp),
             ),
-        onClick = { onAlbumClick(album) },
+        onClick = { onAlbumClick() },
         shape = RoundedCornerShape(9.dp),
     ) {
         // 640x640 image will be casted to 500x500
@@ -132,10 +112,10 @@ fun AlbumCard(
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
 
-            AlbumImage(album.images[0], Modifier.fillMaxSize())
+            AlbumImage(playlist.pictureBig, Modifier.fillMaxSize())
 
             AutoResizedText(
-                text = album.name,
+                text = playlist.user.name,
                 style = MaterialTheme.typography.body1,
                 modifier = Modifier.padding(start = 15.dp, end = 15.dp)
             )
@@ -146,13 +126,13 @@ fun AlbumCard(
 
 @Composable
 fun AlbumImage(
-    image: Image,
+    imageUrl: String,
     modifier: Modifier = Modifier
 ) {
     AsyncImage(
         modifier = modifier,
         model = ImageRequest.Builder(context = LocalContext.current)
-            .data(image.url)
+            .data(imageUrl)
             .crossfade(true)
             .scale(Scale.FILL)
             .build(),

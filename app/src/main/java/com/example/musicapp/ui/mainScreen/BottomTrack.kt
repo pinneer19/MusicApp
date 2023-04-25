@@ -1,42 +1,43 @@
 package com.example.musicapp.ui.mainScreen
 
-import androidx.compose.foundation.Image
+//import com.example.musicapp.model.TrackResponse
+import MusicUiState
+import MusicViewModel
+import android.util.Log
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
-import androidx.compose.runtime.*
-import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.navigation.NavController
 import com.example.musicapp.R
-import com.example.musicapp.data.DataSource
 import com.example.musicapp.model.Track
-import com.example.musicapp.ui.musicScreen.TrackDescription
-import com.example.musicapp.ui.navigation.NavRoutes
+import kotlinx.coroutines.launch
+import java.net.UnknownHostException
 
 @Composable
 fun BottomTrack(
+    musicViewModel: MusicViewModel,
+    musicUiState: MusicUiState,
+    scaffoldState: ScaffoldState,
     track: Track,
-    trackIndex: Int,
     onClick: (Int) -> Unit,
+    onNext: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    var sliderState by remember { mutableStateOf(0f) }
-    Column(
-        modifier = modifier.padding(bottom = 60.dp),
-    ) {
+    //var sliderState by remember { mutableStateOf(0f) }
+    Column(modifier = modifier.background(Color.White)) {
         LinearProgressIndicator(
-            progress = 0.6f,
+            progress = 1f,
             modifier = Modifier
                 .fillMaxWidth()
                 .height(2.dp),
@@ -46,39 +47,80 @@ fun BottomTrack(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
+                .padding(start = 10.dp, end = 10.dp)
                 .clickable {
-                    onClick(trackIndex)
+                    onClick(musicUiState.currentTrackIndex)
                     //navController.navigate(NavRoutes.Track.name + "/$trackIndex")
                 },
-            //.padding(bottom = 60.dp),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween
 
         ) {
 
-            val title = track.name
-            val author = track.artists.joinToString(", ") { it.name }
+            val title = track.title
+            val author = track.artist.name
 
+            val coroutineScope = rememberCoroutineScope()
 
-            IconButton(onClick = { /*TODO*/ }) {
-                Icon(
-                    painter = painterResource(id = R.drawable.favourite),
-                    contentDescription = "Like"
-                )
-            }
+            val context = LocalContext.current
+
             Column(
-                horizontalAlignment = Alignment.CenterHorizontally
+                horizontalAlignment = Alignment.CenterHorizontally,
+                modifier = Modifier.weight(1f)
             ) {
-                Text(text = title)
+                Text(
+                    text = title,
+                    style = MaterialTheme.typography.body1,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
+                )
                 Text(
                     text = author,
-                    style = MaterialTheme.typography.subtitle1.copy(fontSize = 14.sp)
+                    style = MaterialTheme.typography.subtitle1.copy(fontSize = 14.sp),
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
                 )
             }
-            IconButton(onClick = { /*TODO*/ }) {
+
+            IconButton(
+                onClick = {
+                coroutineScope.launch {
+                    try {
+                        Log.i("PLAYER", "BUTTON: ${musicUiState.isPlaying}")
+                        if (musicUiState.isPlaying) {
+                            musicViewModel.pause()
+                        }
+                        else {
+                            musicViewModel.play()
+                            /*musicViewModel.loadTrack(musicUiState.currentTrackIndex, musicUiState.currentPosition)
+                            musicViewModel.updatePlayingStatus(true)*/
+                        }
+
+
+                    }
+                    catch (ex: UnknownHostException) {
+                        scaffoldState.snackbarHostState.showSnackbar(
+                            message = "Check your internet connection",
+                            actionLabel = "OK"
+                        )
+                    }
+                }
+            }) {
                 Icon(
-                    painter = painterResource(id = R.drawable.play_arrow),
+                    painter = if(musicUiState.isPlaying) painterResource(id = R.drawable.baseline_pause_24) else painterResource(id = R.drawable.play_arrow),
                     contentDescription = stringResource(id = R.string.play_audio)
+                )
+            }
+
+            IconButton(
+                onClick = {
+                    onNext()
+                },
+            ) {
+                Icon(
+                    painter = painterResource(id = R.drawable.skip_next),
+                    contentDescription = "Like",
+                    tint = Color.Black
                 )
             }
         }

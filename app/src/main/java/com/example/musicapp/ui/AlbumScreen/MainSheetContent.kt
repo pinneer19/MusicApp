@@ -1,5 +1,6 @@
 package com.example.musicapp.ui.AlbumScreen
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectVerticalDragGestures
 import androidx.compose.foundation.layout.*
@@ -28,23 +29,23 @@ import coil.request.ImageRequest
 import com.example.musicapp.R
 import com.example.musicapp.model.Album
 import com.example.musicapp.model.AutoResizedText
+import com.example.musicapp.model.Playlist
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun MainSheetContent(
-    album: Album,
+    playlist: Playlist,
     sheetState: BottomSheetScaffoldState,
-    scope: CoroutineScope,
     fraction: Float,
     screenHeight: Dp,
 ) {
 
-
     var offsetY by remember {
         mutableStateOf(0f)
     }
+    val scope = rememberCoroutineScope()
     Box(
         contentAlignment = Alignment.Center,
         modifier = Modifier
@@ -52,10 +53,13 @@ fun MainSheetContent(
             .height(screenHeight - 500.dp)
             .background(
                 Brush.verticalGradient(
-                    colors = listOf(MaterialTheme.colors.secondaryVariant,MaterialTheme.colors.secondary, Color.White),
+                    colors = listOf(
+                        MaterialTheme.colors.secondaryVariant,
+                        MaterialTheme.colors.secondary,
+                        Color.White
+                    ),
                 ),
                 alpha = fraction
-                //Color.White
             )
             .graphicsLayer(
                 alpha = fraction,
@@ -82,13 +86,10 @@ fun MainSheetContent(
                             }
                         }
                     }
-                    //if(!(sheetState.bottomSheetState.isExpanded && y < 0) && !(sheetState.bottomSheetState.isCollapsed && y > 0))
                     offsetY += dragAmount
 
                 }
             }
-            //.padding(top = 20.dp, bottom = 20.dp)
-
     ) {
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
@@ -96,12 +97,14 @@ fun MainSheetContent(
             modifier = Modifier.fillMaxWidth()
 
         ) {
-            ImageCard(album = album, modifier = Modifier.fillMaxWidth())
+            ImageCard(playlist = playlist, modifier = Modifier.fillMaxWidth())
 
             Text(
-                modifier = Modifier.fillMaxWidth().padding(top = 15.dp, start = 20.dp, end = 20.dp),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 15.dp, start = 20.dp, end = 20.dp),
                 textAlign = TextAlign.Center,
-                text = album.artists.joinToString(", ") { it.name },
+                text = playlist.user.name,
                 style = MaterialTheme.typography.body1.copy(fontSize = 14.sp, letterSpacing = 2.sp),
                 color = MaterialTheme.colors.onSecondary,
                 overflow = TextOverflow.Ellipsis

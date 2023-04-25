@@ -25,7 +25,6 @@ fun BottomBarNavigation(
 
 
     val bottomBarDestination = items.any { it.route == route } || route == NavRoutes.Album.name + "/{album}"
-    Log.i("BOTTOMBAR", "route: $route\t bottomdest: $bottomBarDestination")
     if (bottomBarDestination) {
         Row(
             modifier = modifier

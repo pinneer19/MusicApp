@@ -41,14 +41,14 @@ fun TrackCard(
         ) {
             Column(modifier.weight(1f)) {
                 Text(
-                    text = track.name,
+                    text = track.title,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
                     style = MaterialTheme.typography.body1
                 )
                 Spacer(modifier = Modifier.height(10.dp))
                 Text(
-                    text = track.artists.joinToString(", ") { it.name },
+                    text = track.artist.name,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
                     style = MaterialTheme.typography.subtitle1.copy(

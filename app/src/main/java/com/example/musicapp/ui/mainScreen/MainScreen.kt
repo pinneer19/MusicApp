@@ -1,5 +1,6 @@
 package com.example.musicapp.ui.mainScreen
 
+import MusicViewModel
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.pullrefresh.PullRefreshState
 import androidx.compose.runtime.Composable
@@ -23,7 +24,7 @@ fun MainScreen(
         is NetworkUiState.Loading -> LoadingScreen()
 
         is NetworkUiState.Success -> ResultScreen(
-            state.albumsResponse,
+            state.playlistsResponse,
             networkViewModel,
             onNavigateClick = onNavigateClick
         )

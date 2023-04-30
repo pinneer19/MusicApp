@@ -1,7 +1,8 @@
 package com.example.musicapp.network
 
-import android.util.Log
-import androidx.compose.runtime.*
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.APPLICATION_KEY
@@ -11,13 +12,11 @@ import androidx.lifecycle.viewmodel.viewModelFactory
 import com.example.musicapp.MusicApplication
 import com.example.musicapp.data.MusicApiRepository
 import com.example.musicapp.model.Playlist
-import com.example.musicapp.model.PlaylistTracksResponse
-import com.example.musicapp.model.PlaylistsResponse
 import com.example.musicapp.model.Track
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
-import retrofit2.*
+import retrofit2.HttpException
 import java.io.IOException
 
 sealed interface NetworkUiState {

@@ -1,17 +1,8 @@
 package com.example.musicapp.model
 
+import android.os.Parcelable
 import com.google.gson.annotations.SerializedName
-
-/*@kotlinx.serialization.Serializable
-data class Track(
-    val artists: List<Artist>,
-    val uri: String,
-    val duration_ms: Int,
-    val name: String,
-    val href: String,
-    val id: String
-)
-*/
+import kotlinx.parcelize.Parcelize
 
 @kotlinx.serialization.Serializable
 data class Track(

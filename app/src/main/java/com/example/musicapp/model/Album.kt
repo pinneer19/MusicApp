@@ -1,9 +1,11 @@
 package com.example.musicapp.model
 
 import android.net.Uri
+import android.os.Parcelable
 import com.example.musicapp.model.Artist
 import com.google.gson.Gson
 import com.google.gson.annotations.SerializedName
+import kotlinx.parcelize.Parcelize
 
 @kotlinx.serialization.Serializable
 data class Album(

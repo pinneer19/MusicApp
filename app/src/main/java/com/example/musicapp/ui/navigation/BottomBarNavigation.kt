@@ -24,7 +24,7 @@ fun BottomBarNavigation(
     val route = backStackEntry.value?.destination?.route
 
 
-    val bottomBarDestination = items.any { it.route == route } || route == NavRoutes.Album.name + "/{album}"
+    val bottomBarDestination = items.any { it.route == route } //|| route == NavRoutes.Album.name + "/{album}"
     if (bottomBarDestination) {
         Row(
             modifier = modifier

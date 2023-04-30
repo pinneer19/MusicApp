@@ -1,8 +1,6 @@
 package com.example.musicapp.ui.mainScreen
 
-import MusicViewModel
 import android.annotation.SuppressLint
-import android.util.Log
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
@@ -14,17 +12,17 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
-import coil.size.Scale
 import com.example.musicapp.R
 import com.example.musicapp.model.*
-import com.example.musicapp.network.NetworkUiState
 import com.example.musicapp.network.NetworkViewModel
+import com.example.musicapp.ui.animation.shimmerEffect
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -102,7 +100,9 @@ fun PlaylistCard(
                 spotColor = Color.Black,
                 elevation = 7.dp,
                 shape = RoundedCornerShape(9.dp),
-            ),
+            )
+            .shimmerEffect()
+        ,
         onClick = { onAlbumClick() },
         shape = RoundedCornerShape(9.dp),
     ) {
@@ -112,7 +112,7 @@ fun PlaylistCard(
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
 
-            AlbumImage(playlist.pictureBig, Modifier.fillMaxSize())
+            AlbumImage(playlist.pictureBig, Modifier.fillMaxWidth().shimmerEffect())
 
             AutoResizedText(
                 text = playlist.user.name,
@@ -130,14 +130,13 @@ fun AlbumImage(
     modifier: Modifier = Modifier
 ) {
     AsyncImage(
-        modifier = modifier,
+        modifier = modifier.size(width = 150.dp, height = 200.dp),
         model = ImageRequest.Builder(context = LocalContext.current)
             .data(imageUrl)
             .crossfade(true)
-            .scale(Scale.FILL)
             .build(),
         error = painterResource(R.drawable.baseline_broken_image_24),
-        placeholder = painterResource(R.drawable.loading_img),
+        contentScale = ContentScale.Crop,
         contentDescription = stringResource(R.string.album_photo)
     )
 }

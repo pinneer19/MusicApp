@@ -1,7 +1,6 @@
 package com.example.musicapp.ui.musicScreen
 
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Slider
 import androidx.compose.material.SliderDefaults
 import androidx.compose.material.Text
@@ -10,61 +9,53 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import com.example.musicapp.viewmodel.MusicUiState
-import com.example.musicapp.viewmodel.MusicViewModel
-import kotlin.math.roundToLong
+
 
 const val MillieSecondsInMinute = 60000
 const val MillieSecondsInSecond = 1000
 
-private fun parseSliderValue(state: Long = 3000): String {
+private fun parseSliderValue(state: Int): String {
+
     val minutes = state / MillieSecondsInMinute
     val seconds = (state - MillieSecondsInMinute * minutes) / MillieSecondsInSecond
+
     return String.format("%d:%02d", minutes, seconds)
 }
 
 @Composable
-fun PlayerSlider(
-    musicViewModel: MusicViewModel,
-    currentPosition: Long,
-    onValueChanged: (Float) -> Unit,
-    duration: Long = 30_000
-) {
+fun PlayerSlider(duration: Int) {
 
     // duration in ms
+    var sliderState by rememberSaveable { mutableStateOf(0f) }
+
+
     val parsedDuration = parseSliderValue(duration)
-    Row(
+    Column(
         modifier = Modifier
             .fillMaxWidth()
             .padding(
                 start = 20.dp, end = 20.dp
-            ),
-        horizontalArrangement = Arrangement.SpaceBetween,
-        verticalAlignment = Alignment.CenterVertically
+            )
     ) {
-        Text(
-            text = parseSliderValue(currentPosition),
-            color = MaterialTheme.colors.primary,
-            modifier = Modifier.padding(end = 7.dp)
-        )
         Slider(
-            value = currentPosition.toFloat(),
-            onValueChange = { value ->
-                onValueChanged(value)
-            },
-
+            value = 0f,
+            onValueChange = { sliderState = it },
             colors = SliderDefaults.colors(
                 thumbColor = Color.Black,
                 activeTrackColor = Color.Gray
             ),
-            valueRange = 0f..duration.toFloat(),
-            modifier = Modifier.weight(1f)
+            valueRange = 0f..100f
         )
-        Text(text = parsedDuration, color = MaterialTheme.colors.primary)
+        Row(
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Text(text = parseSliderValue(sliderState.toInt()), color = Color.Black)
+            Spacer(modifier = Modifier.weight(1f))
+            Text(text = parsedDuration, color = Color.Black)
+        }
     }
 
 }

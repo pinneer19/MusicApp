@@ -5,6 +5,12 @@ import com.example.musicapp.ui.navigation.BottomNavItem
 import com.example.musicapp.ui.navigation.NavRoutes
 import kotlin.time.Duration
 
+object DataSource {
+    val trackImageId: Int = R.drawable.trackimage
+    val trackTitleId: Int = R.string.track_title
+    val trackAuthorId: Int = R.string.track_author
+}
+
 object BottomNavItems {
     val list = listOf(
         BottomNavItem(

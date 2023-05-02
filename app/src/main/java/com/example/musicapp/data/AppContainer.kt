@@ -1,49 +1,48 @@
 package com.example.musicapp.data
 
-import com.example.musicapp.network.SpotifyApiService
-import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
-import kotlinx.serialization.ExperimentalSerializationApi
-import kotlinx.serialization.json.Json
-import okhttp3.MediaType
-import okhttp3.MediaType.Companion.toMediaType
+import android.app.Application
+import androidx.media3.exoplayer.ExoPlayer
+import com.example.musicapp.network.DeezerApiService
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
-import retrofit2.converter.scalars.ScalarsConverterFactory
 
 interface AppContainer {
-    val musicApiRepository: MusicRepository
+    val musicApiRepository: MusicApiRepository
+    val playerRepository: MusicRepository
 }
 
-class MusicAppContainer() : AppContainer {
-    private val BASE_URL_FOR_TOKEN = "https://accounts.spotify.com/"
-    private val BASE_URL = "https://api.spotify.com/v1/"
+class MusicAppContainer(private val app: Application) : AppContainer {
+    private val BASE_URL = "https://api.deezer.com/"
 
-    private val loggingInterceptor = HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY)
-    private val okHttpClient = OkHttpClient().newBuilder().addInterceptor(loggingInterceptor).build()
+    private val loggingInterceptor =
+        HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY)
+    private val okHttpClient =
+        OkHttpClient().newBuilder().addInterceptor(loggingInterceptor).build()
+
     private val retrofit: Retrofit = Retrofit.Builder()
         .addConverterFactory(GsonConverterFactory.create())
         .baseUrl(BASE_URL)
         .client(okHttpClient)
         .build()
 
-    private val retrofit_token: Retrofit = Retrofit.Builder()
-        .addConverterFactory(GsonConverterFactory.create())
-        .baseUrl(BASE_URL_FOR_TOKEN)
-        .build()
-
-    private val retrofitService: SpotifyApiService by lazy {
-        retrofit.create(SpotifyApiService::class.java)
+    private val retrofitService: DeezerApiService by lazy {
+        retrofit.create(DeezerApiService::class.java)
     }
 
-    private val retrofitTokenService: SpotifyApiService by lazy {
-        retrofit_token.create(SpotifyApiService::class.java)
+    private val player: ExoPlayer = ExoPlayer.Builder(app).build()
+
+    private val musicService: MusicService by lazy {
+        ExoPlayerMusicService(app)
     }
 
-
-    override val musicApiRepository: MusicRepository by lazy {
-        NetworkMusicRepository(retrofitService, retrofitTokenService)
+    override val musicApiRepository: MusicApiRepository by lazy {
+        NetworkMusicRepository(retrofitService)
     }
+    override val playerRepository: MusicRepository by lazy {
+        MusicRepositoryManager(musicService)
+    }
+
 
 }

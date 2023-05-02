@@ -1,7 +1,8 @@
 package com.example.musicapp.network
 
-import android.util.Log
-import androidx.compose.runtime.*
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.APPLICATION_KEY
@@ -9,32 +10,26 @@ import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.example.musicapp.MusicApplication
-import com.example.musicapp.data.MusicRepository
-import com.example.musicapp.data.NetworkMusicRepository
-import com.example.musicapp.model.AlbumsResponse
-import com.example.musicapp.model.TokenResponse
-import com.example.musicapp.model.TrackResponse
-import kotlinx.coroutines.Dispatchers
+import com.example.musicapp.data.MusicApiRepository
+import com.example.musicapp.model.Playlist
+import com.example.musicapp.model.Track
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
-import retrofit2.*
+import retrofit2.HttpException
 import java.io.IOException
-import java.net.UnknownHostException
 
 sealed interface NetworkUiState {
-    data class Success(val albumsResponse: AlbumsResponse) : NetworkUiState
+    data class Success(val playlistsResponse: List<Playlist>) : NetworkUiState
     object Error : NetworkUiState
     object Loading : NetworkUiState
     companion object {
-        var token: String = ""
-        var albumsResponse: AlbumsResponse? = null
-        var trackResponse: TrackResponse? = null
+        var trackResponse: List<Track>? = null
+        var playlistsResponse: List<Playlist>? = null
     }
 }
 
-class NetworkViewModel(/*private*/ val musicRepository: MusicRepository) : ViewModel() {
+class NetworkViewModel(private val musicRepository: MusicApiRepository) : ViewModel() {
     /** The mutable State that stores the status of the most recent request */
     var networkUiState: NetworkUiState by mutableStateOf(NetworkUiState.Loading)
         private set
@@ -50,18 +45,15 @@ class NetworkViewModel(/*private*/ val musicRepository: MusicRepository) : ViewM
     }
 
     /**
-     * Gets Albums information from the Spotify API Retrofit service
+     * Gets Albums information from the Deezer API Retrofit service
      */
-    fun getApiAlbums() {
-
+    fun getApiAlbums(limit: Int = 20) {
         viewModelScope.launch {
             _isLoadingAlbums.value = true
             networkUiState = try {
-
-                getSpotifyToken(musicRepository)
-                NetworkUiState.albumsResponse = musicRepository.getAlbums(NetworkUiState.token, 20)
+                NetworkUiState.playlistsResponse = musicRepository.getPlaylists(limit)
                 _isLoadingAlbums.value = false
-                NetworkUiState.Success(NetworkUiState.albumsResponse!!)
+                NetworkUiState.Success(NetworkUiState.playlistsResponse!!)
 
             } catch (e: IOException) {
                 _isLoadingAlbums.emit(false)
@@ -70,12 +62,15 @@ class NetworkViewModel(/*private*/ val musicRepository: MusicRepository) : ViewM
                 _isLoadingAlbums.emit(false)
                 NetworkUiState.Error
             }
+            catch (e: Exception) {
+                e.printStackTrace()
+                NetworkUiState.Error
+            }
         }
     }
 
-    private suspend fun getSpotifyToken(networkMusicRepository: MusicRepository) {
-        val responseCall = networkMusicRepository.getToken()
-        NetworkUiState.token = "Bearer " + responseCall.accessToken
+    suspend fun getPlaylistTracks(id: String) {
+        NetworkUiState.trackResponse = musicRepository.getPlaylistTracks(id)
     }
 
     companion object {

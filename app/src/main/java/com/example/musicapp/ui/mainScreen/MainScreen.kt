@@ -3,13 +3,10 @@ package com.example.musicapp.ui.mainScreen
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.pullrefresh.PullRefreshState
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.tooling.preview.Preview
-import androidx.navigation.NavController
 import com.example.musicapp.network.NetworkUiState
 import com.example.musicapp.network.NetworkViewModel
 
 
-//@Preview(showSystemUi = true)
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun MainScreen(
@@ -23,7 +20,7 @@ fun MainScreen(
         is NetworkUiState.Loading -> LoadingScreen()
 
         is NetworkUiState.Success -> ResultScreen(
-            state.albumsResponse,
+            state.playlistsResponse,
             networkViewModel,
             onNavigateClick = onNavigateClick
         )

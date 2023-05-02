@@ -13,15 +13,13 @@ import com.example.musicapp.R
 
 
 @Composable
-fun TopAppBar(
-    onCollapseClicked: () -> Unit
-) {
+fun TopAppBar() {
     // Some buttons such as hide page, adding to playlist and so on
     Row(
         modifier = Modifier.fillMaxWidth()
     ) {
 
-        IconButton(onClick = { onCollapseClicked() }) {
+        IconButton(onClick = { /*TODO*/ }) {
             Icon(
                 painter = painterResource(id = R.drawable.arrow_down),
                 contentDescription = stringResource(id = R.string.arrow_back),

@@ -35,6 +35,7 @@ fun AutoResizedText(
 
     val defaultFontSize = style.fontSize
 
+
     Text(
         text = text,
         color = color,

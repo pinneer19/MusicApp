@@ -17,4 +17,9 @@
     <string name="album_photo">Album photo</string>
     <string name="error_message">Oh no!</string>
     <string name="play_audio">Play audio</string>
+    <string name="wrong_email">Wrong email</string>
+    <string name="password">Password</string>
+    <string name="wrong_password">Wrong password</string>
+    <string name="or_label">Or</string>
+    <string name="continue_google">Continue with Google</string>
 </resources>

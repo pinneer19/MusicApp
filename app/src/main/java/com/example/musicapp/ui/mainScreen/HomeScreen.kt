@@ -18,7 +18,10 @@ import com.example.musicapp.ui.navigation.graphs.HomeNavGraph
 
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
-fun HomeScreen(navController: NavHostController = rememberNavController()) {
+fun HomeScreen(
+    navController: NavHostController = rememberNavController(),
+    logOutAction: () -> Unit
+) {
     Scaffold(
         bottomBar = {
             BottomBarNavigation(
@@ -32,6 +35,11 @@ fun HomeScreen(navController: NavHostController = rememberNavController()) {
         val viewModel: NetworkViewModel = viewModel(factory = NetworkViewModel.Factory)
         val trackViewModel: MusicViewModel = viewModel(factory = MusicViewModel.Factory)
 
-        HomeNavGraph(navController = navController, viewModel, trackViewModel)
+        HomeNavGraph(
+            navController = navController,
+            networkViewModel = viewModel,
+            musicViewModel = trackViewModel,
+            logOutAction = logOutAction
+        )
     }
 }

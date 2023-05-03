@@ -37,7 +37,6 @@ fun AlbumScreen(
 
 ) {
 
-
     val musicUiState by musicViewModel.musicUiState.collectAsState()
     val scaffoldState = rememberScaffoldState()
     val screenHeight = LocalConfiguration.current.screenHeightDp.dp
@@ -64,8 +63,6 @@ fun AlbumScreen(
             //.padding(bottom = 60.dp),
         scaffoldState = scaffoldState
     ) {
-
-
 
         BottomSheetScaffold(
             scaffoldState = bottomSheetScaffoldState,

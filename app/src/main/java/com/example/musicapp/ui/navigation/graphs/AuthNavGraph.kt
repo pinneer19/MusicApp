@@ -1,31 +1,37 @@
 package com.example.musicapp.ui.navigation.graphs
 
 
+import android.util.Log
+import android.widget.Toast
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
 import androidx.navigation.navigation
-import com.example.musicapp.ui.SignUpScreen.SignUpScreen
-import com.example.musicapp.ui.loginScreen.LoginScreen
+import com.example.musicapp.ui.signinScreen.SignInScreen
+import com.example.musicapp.ui.signupScreen.SignUpScreen
+import com.example.musicapp.viewmodel.SignInViewModel
+import com.example.musicapp.viewmodel.SignUpViewModel
 
 fun NavGraphBuilder.authNavGraph(navController: NavHostController) {
     navigation(
         route = Graph.AUTHENTICATION,
         startDestination = AuthScreen.Login.route
     ) {
+
         composable(route = AuthScreen.Login.route) {
-            LoginScreen(
-                onClick = {
-                    navController.popBackStack()
-                    navController.navigate(Graph.HOME)
-                },
-                onSignUpClick = {
-                    navController.navigate(AuthScreen.SignUp.route)
-                }
-            )
+            val viewModel: SignInViewModel = viewModel(factory = SignInViewModel.Factory)
+            if(viewModel.checkUserIsLogged()) {
+                navController.popBackStack()
+                navController.navigate(Graph.HOME)
+
+            }
+            else SignInScreen(viewModel = viewModel, navController = navController)
         }
+
         composable(route = AuthScreen.SignUp.route) {
-            SignUpScreen(name = AuthScreen.SignUp.route) {}
+            val viewModel: SignUpViewModel = viewModel(factory = SignUpViewModel.Factory)
+            SignUpScreen(viewModel = viewModel, navController = navController)
         }
     }
 }

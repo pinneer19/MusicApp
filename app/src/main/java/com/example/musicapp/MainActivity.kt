@@ -20,7 +20,6 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        auth = Firebase.auth
         setContent {
             MusicAppTheme {
                 RootNavigationGraph(navController = rememberNavController())

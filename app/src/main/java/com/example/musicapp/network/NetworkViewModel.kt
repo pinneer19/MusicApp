@@ -10,7 +10,7 @@ import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.example.musicapp.MusicApplication
-import com.example.musicapp.data.MusicApiRepository
+import com.example.musicapp.data.music.MusicApiRepository
 import com.example.musicapp.model.Playlist
 import com.example.musicapp.model.Track
 import kotlinx.coroutines.flow.MutableStateFlow

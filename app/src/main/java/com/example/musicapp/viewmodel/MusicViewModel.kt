@@ -3,7 +3,6 @@ package com.example.musicapp.viewmodel
 import android.net.Uri
 import android.os.Handler
 import android.os.Looper
-import android.os.Parcelable
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.initializer
@@ -12,10 +11,9 @@ import androidx.media3.common.MediaItem
 import androidx.media3.common.Player
 import androidx.media3.exoplayer.ExoPlayer
 import com.example.musicapp.MusicApplication
-import com.example.musicapp.data.MusicRepository
+import com.example.musicapp.data.music.MusicRepository
 import com.example.musicapp.model.Track
 import kotlinx.coroutines.flow.*
-import kotlinx.parcelize.Parcelize
 
 data class MusicUiState(
     val isPlaying: Boolean = false,

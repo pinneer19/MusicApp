@@ -72,6 +72,7 @@ fun ResultScreen(
                                 onNavigateClick(index)
                             }
                             catch (ex: UnknownHostException) {
+
                                 scaffoldState.snackbarHostState.showSnackbar(
                                     message = "Check your internet connection",
                                     actionLabel = "OK"

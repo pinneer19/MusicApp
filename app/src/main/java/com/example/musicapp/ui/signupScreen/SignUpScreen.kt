@@ -1,7 +1,6 @@
 package com.example.musicapp.ui.signupScreen
 
 import android.widget.Toast
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -14,12 +13,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.PasswordVisualTransformation
@@ -28,17 +25,14 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.musicapp.R
-import com.example.musicapp.data.auth.Constant
+import com.example.musicapp.data.auth.Resource
 import com.example.musicapp.ui.navigation.graphs.AuthScreen
-import com.example.musicapp.ui.navigation.graphs.Graph
-import com.example.musicapp.viewmodel.SignUpViewModel
-import com.google.android.gms.auth.api.signin.GoogleSignIn
-import com.google.android.gms.auth.api.signin.GoogleSignInOptions
+import com.example.musicapp.viewmodel.AuthViewModel
 import kotlinx.coroutines.launch
 
 @Composable
 fun SignUpScreen(
-    viewModel: SignUpViewModel,
+    viewModel: AuthViewModel,
     navController: NavController,
 ) {
 
@@ -50,7 +44,7 @@ fun SignUpScreen(
     }
     val scope = rememberCoroutineScope()
     val context = LocalContext.current
-    val state = viewModel.signUpState.collectAsState(initial = null)
+    val state = viewModel.signupState.collectAsState(initial = null)
     val focusManager = LocalFocusManager.current
 
     var passwordVisible by remember {
@@ -82,13 +76,10 @@ fun SignUpScreen(
                 modifier = Modifier.fillMaxWidth(),
                 onValueChange = { email = it },
                 label = {
-                    if (state.value?.isError?.isNotEmpty() == true) {
-                        Text(text = stringResource(R.string.wrong_email))
-                    } else {
-                        Text(text = stringResource(R.string.email))
-                    }
+                    if (state.value is Resource.Error) Text(text = stringResource(R.string.wrong_email))
+                    else Text(text = stringResource(R.string.email))
                 },
-                isError = state.value?.isError?.isNotEmpty() == true,
+                isError = state.value is Resource.Error,
                 keyboardOptions = KeyboardOptions.Default.copy(
                     imeAction = ImeAction.Next
                 ),
@@ -105,13 +96,12 @@ fun SignUpScreen(
                 modifier = Modifier.fillMaxWidth(),
                 onValueChange = { password = it },
                 label = {
-                    if (state.value?.isError?.isNotEmpty() == true) {
-                        Text(text = stringResource(R.string.wrong_password))
-                    } else {
-                        Text(text = stringResource(R.string.password))
-                    }
+
+                    if (state.value is Resource.Error) Text(text = stringResource(R.string.wrong_password))
+                    else Text(text = stringResource(R.string.password))
+
                 },
-                isError = state.value?.isError?.isNotEmpty() == true,
+                isError = state.value is Resource.Error,
                 keyboardOptions = KeyboardOptions.Default.copy(
                     imeAction = ImeAction.Done
                 ),
@@ -173,32 +163,31 @@ fun SignUpScreen(
                 }
         )
 
-        if (state.value?.isLoading == true) {
-            CircularProgressIndicator(
-                modifier = Modifier
-                    .align(Alignment.TopCenter)
-                    .padding(top = 40.dp),
-                color = MaterialTheme.colors.primary
-            )
-        }
-        state.value?.let { state ->
-            when {
-                state.isSuccess?.isNotEmpty() == true -> {
-                    LaunchedEffect(key1 = state.isSuccess) {
+        state.value?.let {
+            when(it) {
+                is Resource.Success -> {
+                    LaunchedEffect(key1 = it.data) {
                         scope.launch {
-                            val success = state.isSuccess
                             navController.navigate(AuthScreen.Login.route)
-                            Toast.makeText(context, "$success", Toast.LENGTH_LONG).show()
+                            Toast.makeText(context, "Sign up success", Toast.LENGTH_LONG).show()
                         }
                     }
                 }
-                state.isError?.isNotBlank() == true -> {
-                    LaunchedEffect(key1 = state.isError) {
+                is Resource.Error -> {
+                    LaunchedEffect(key1 = it.message) {
                         scope.launch {
-                            val error = state.isError
-                            Toast.makeText(context, "$error", Toast.LENGTH_LONG).show()
+                            val error = it.message
+                            Toast.makeText(context, error, Toast.LENGTH_LONG).show()
                         }
                     }
+                }
+                is Resource.Loading -> {
+                    CircularProgressIndicator(
+                        modifier = Modifier
+                            .align(Alignment.TopCenter)
+                            .padding(top = 40.dp),
+                        color = MaterialTheme.colors.primary
+                    )
                 }
             }
         }

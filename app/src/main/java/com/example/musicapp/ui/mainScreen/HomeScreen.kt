@@ -14,12 +14,14 @@ import com.example.musicapp.data.BottomNavItems
 import com.example.musicapp.network.NetworkViewModel
 import com.example.musicapp.ui.navigation.BottomBarNavigation
 import com.example.musicapp.ui.navigation.graphs.HomeNavGraph
+import com.example.musicapp.viewmodel.AuthViewModel
 
 
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
 fun HomeScreen(
     navController: NavHostController = rememberNavController(),
+    authViewModel: AuthViewModel,
     logOutAction: () -> Unit
 ) {
     Scaffold(
@@ -39,6 +41,7 @@ fun HomeScreen(
             navController = navController,
             networkViewModel = viewModel,
             musicViewModel = trackViewModel,
+            authViewModel = authViewModel,
             logOutAction = logOutAction
         )
     }

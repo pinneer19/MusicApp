@@ -31,9 +31,11 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.musicapp.R
 import com.example.musicapp.data.auth.Constant.ServerClient
+import com.example.musicapp.data.auth.Resource
 import com.example.musicapp.ui.navigation.graphs.AuthScreen
 import com.example.musicapp.ui.navigation.graphs.Graph
-import com.example.musicapp.viewmodel.SignInViewModel
+import com.example.musicapp.viewmodel.AuthViewModel
+
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
@@ -42,11 +44,11 @@ import kotlinx.coroutines.launch
 
 @Composable
 fun SignInScreen(
-    viewModel: SignInViewModel,
+    viewModel: AuthViewModel,
     navController: NavController,
 ) {
 
-    val googleSignInState = viewModel.googleState.value
+    val googleSignInState = viewModel.googleState.collectAsState(initial = null)
 
     val launcher =
         rememberLauncherForActivityResult(contract = ActivityResultContracts.StartActivityForResult()) {
@@ -59,6 +61,7 @@ fun SignInScreen(
                 Log.e("Api exception", ex.message.toString())
             }
         }
+
     var email by rememberSaveable {
         mutableStateOf("")
     }
@@ -71,7 +74,8 @@ fun SignInScreen(
 
     val scope = rememberCoroutineScope()
     val context = LocalContext.current
-    val state = viewModel.signInState.collectAsState(initial = null)
+    val state = viewModel.loginState.collectAsState(initial = null)
+
     val focusManager = LocalFocusManager.current
 
     Box(
@@ -101,13 +105,10 @@ fun SignInScreen(
                 modifier = Modifier.fillMaxWidth(),
                 onValueChange = { email = it },
                 label = {
-                    if (state.value?.isError?.isNotEmpty() == true) {
-                        Text(text = stringResource(R.string.wrong_email))
-                    } else {
-                        Text(text = stringResource(R.string.email))
-                    }
+                    if (state.value is Resource.Error) Text(text = stringResource(R.string.wrong_email))
+                    else Text(text = stringResource(R.string.email))
                 },
-                isError = state.value?.isError?.isNotEmpty() == true,
+                isError = state.value is Resource.Error,
                 keyboardOptions = KeyboardOptions.Default.copy(
                     imeAction = ImeAction.Next
                 ),
@@ -123,13 +124,10 @@ fun SignInScreen(
                 modifier = Modifier.fillMaxWidth(),
                 onValueChange = { password = it },
                 label = {
-                    if (state.value?.isError?.isNotEmpty() == true) {
-                        Text(text = stringResource(R.string.wrong_password))
-                    } else {
-                        Text(text = stringResource(R.string.password))
-                    }
+                    if (state.value is Resource.Error) Text(text = stringResource(R.string.wrong_password))
+                    else Text(text = stringResource(R.string.password))
                 },
-                isError = state.value?.isError?.isNotEmpty() == true,
+                isError = state.value is Resource.Error,
                 keyboardOptions = KeyboardOptions.Default.copy(
                     imeAction = ImeAction.Done
                 ),
@@ -251,59 +249,73 @@ fun SignInScreen(
                 }
         )
 
-        if (state.value?.isLoading == true || googleSignInState.loading) {
+        /*if (state.value?. == true || googleSignInState?.loading == true) {
             CircularProgressIndicator(
                 modifier = Modifier
                     .align(Alignment.TopCenter)
                     .padding(top = 40.dp),
                 color = MaterialTheme.colors.primary
             )
-        }
-        state.value?.let { state ->
-            when {
-                state.isSuccess?.isNotEmpty() == true -> {
-                    LaunchedEffect(key1 = state.isSuccess) {
+        }*/
+        state.value?.let {
+            when (it) {
+                is Resource.Success -> {
+                    LaunchedEffect(key1 = it.data) {
                         scope.launch {
-
-                            val success = state.isSuccess
                             navController.popBackStack()
                             navController.navigate(Graph.HOME)
-                            Toast.makeText(context, "$success", Toast.LENGTH_LONG).show()
+                            Toast.makeText(context, "Success", Toast.LENGTH_LONG).show()
 
                         }
                     }
                 }
-                state.isError?.isNotBlank() == true -> {
-                    LaunchedEffect(key1 = state.isError) {
+                is Resource.Error -> {
+                    LaunchedEffect(key1 = it.message) {
                         scope.launch {
-                            val error = state.isError
+                            val error = it.message
                             Toast.makeText(context, "$error", Toast.LENGTH_LONG).show()
                         }
                     }
                 }
-            }
-        }
-
-        LaunchedEffect(key1 = googleSignInState.success) {
-            scope.launch {
-                if (googleSignInState.success != null) {
-                    navController.popBackStack()
-                    navController.navigate(Graph.HOME)
-                    Toast.makeText(context, "Sign in success", Toast.LENGTH_LONG).show()
+                is Resource.Loading -> {
+                    CircularProgressIndicator(
+                        modifier = Modifier
+                            .align(Alignment.TopCenter)
+                            .padding(top = 40.dp),
+                        color = MaterialTheme.colors.primary
+                    )
                 }
             }
         }
+        googleSignInState.value?.let {
+            when (it) {
+                is Resource.Success -> {
+                    LaunchedEffect(key1 = it.data) {
+                        scope.launch {
+                            navController.popBackStack()
+                            navController.navigate(Graph.HOME)
+                            Toast.makeText(context, "Sign in success", Toast.LENGTH_LONG).show()
 
-        LaunchedEffect(key1 = googleSignInState.error) {
-            scope.launch {
-                if (googleSignInState.error.isNotEmpty()) {
-                    val error = googleSignInState.error
-                    Toast.makeText(context, error, Toast.LENGTH_LONG).show()
+                        }
+                    }
+                }
+                is Resource.Error -> {
+                    LaunchedEffect(key1 = it.message) {
+                        scope.launch {
+                            val error = it.message
+                            Toast.makeText(context, error, Toast.LENGTH_LONG).show()
+                        }
+                    }
+                }
+                is Resource.Loading -> {
+                    CircularProgressIndicator(
+                        modifier = Modifier
+                            .align(Alignment.TopCenter)
+                            .padding(top = 40.dp),
+                        color = MaterialTheme.colors.primary
+                    )
                 }
             }
         }
-
     }
-
-
 }

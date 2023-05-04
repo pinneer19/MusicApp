@@ -1,24 +1,21 @@
 package com.example.musicapp.ui.navigation.graphs
 
-import android.util.Log
 import com.example.musicapp.viewmodel.MusicViewModel
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.lifecycle.ViewModelStoreOwner
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.*
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.example.musicapp.network.NetworkUiState
 import com.example.musicapp.network.NetworkViewModel
-import com.example.musicapp.ui.SettingsScreen.SettingsScreen
+import com.example.musicapp.ui.ProfileScreen.ProfileScreen
 import com.example.musicapp.ui.albumScreen.AlbumScreen
 import com.example.musicapp.ui.mainScreen.MainScreen
 import com.example.musicapp.ui.navigation.NavRoutes
-import com.example.musicapp.viewmodel.SignOutViewModel
+import com.example.musicapp.viewmodel.AuthViewModel
 
 
 @OptIn(ExperimentalMaterialApi::class)
@@ -27,6 +24,7 @@ fun HomeNavGraph(
     navController: NavHostController,
     networkViewModel: NetworkViewModel,
     musicViewModel: MusicViewModel,
+    authViewModel: AuthViewModel,
     logOutAction: () -> Unit
 ) {
 
@@ -51,11 +49,13 @@ fun HomeNavGraph(
             )
         }
         composable(route = NavRoutes.Settings.name) {
-            val viewModel: SignOutViewModel = viewModel(factory = SignOutViewModel.Factory)
-            SettingsScreen {
-                viewModel.signOutUser()
+            //val viewModel: SignOutViewModel = viewModel(factory = SignOutViewModel.Factory)
+            ProfileScreen(viewModel = authViewModel) {
                 logOutAction()
+
             }
+
+
         }
         composable(route = NavRoutes.Playlists.name) {
 
@@ -80,23 +80,7 @@ fun HomeNavGraph(
                 tracks = NetworkUiState.trackResponse!!,
             )
         }
-        /*composable(
-            route = NavRoutes.Track.name + "/{state}",
-            arguments = listOf(
-                navArgument("track") { type = NavType.IntType },
-               navArgument("state") { type = StateType() }
 
-            )
-        ) { navBackStackEntry ->
-            val trackId =
-                navBackStackEntry.arguments?.getInt("track") ?: throw NullPointerException()
-            MusicScreen(
-                track = NetworkUiState.trackResponse!![state.currentTrackIndex],
-                musicViewModel = musicViewModel,
-                musicUiState = state,
-                onCollapseClicked = { navController.popBackStack() }
-            )
-        }*/
     }
 }
 

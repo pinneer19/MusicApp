@@ -46,10 +46,6 @@ class MusicAppContainer(private val app: Application) : AppContainer {
 
     private val firebaseInstance = FirebaseAuth.getInstance()
 
-    private val sharedPreferences: SharedPreferences by lazy {
-        app.getSharedPreferences("auth", Context.MODE_PRIVATE)
-    }
-
 
     override val musicApiRepository: MusicApiRepository by lazy {
         NetworkMusicRepository(retrofitService)
@@ -59,6 +55,6 @@ class MusicAppContainer(private val app: Application) : AppContainer {
     }
 
     override val authRepository: AuthRepository by lazy {
-        AuthRepositoryImpl(firebaseInstance, sharedPreferences)
+        AuthRepositoryImpl(firebaseInstance, app)
     }
 }

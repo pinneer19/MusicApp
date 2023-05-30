@@ -11,9 +11,6 @@ import androidx.navigation.compose.rememberNavController
 import com.example.musicapp.ui.navigation.graphs.RootNavigationGraph
 import com.example.musicapp.ui.theme.MusicAppTheme
 import com.example.musicapp.viewmodel.AuthViewModel
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.ktx.auth
-import com.google.firebase.ktx.Firebase
 
 class MainActivity : ComponentActivity() {
 

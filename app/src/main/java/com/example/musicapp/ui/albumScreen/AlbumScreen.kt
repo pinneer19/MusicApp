@@ -2,7 +2,6 @@ package com.example.musicapp.ui.albumScreen
 
 import com.example.musicapp.viewmodel.MusicViewModel
 import android.annotation.SuppressLint
-import android.net.Uri
 import androidx.compose.animation.*
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -17,12 +16,10 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavController
 import com.example.musicapp.R
 import com.example.musicapp.model.*
 import com.example.musicapp.ui.musicScreen.MusicScreen
-import com.example.musicapp.ui.navigation.NavRoutes
-import com.google.gson.Gson
+import com.example.musicapp.viewmodel.PlaylistViewModel
 import kotlinx.coroutines.launch
 import kotlin.math.roundToInt
 
@@ -34,6 +31,8 @@ fun AlbumScreen(
     musicViewModel: MusicViewModel,
     playlist: Playlist,
     tracks: List<Track>,
+    userPlaylists: List<UserPlaylist>,
+    playlistViewModel: PlaylistViewModel
 
 ) {
 
@@ -103,7 +102,9 @@ fun AlbumScreen(
                                     if (musicUiState.isPlaying) musicViewModel.pause()
                                     else musicViewModel.play()
                                 } else musicViewModel.loadTrack(index)
-                            }
+                            },
+                            userPlaylists = userPlaylists,
+                            playlistViewModel = playlistViewModel
                         )
                     },
                     sheetElevation = 0.dp,

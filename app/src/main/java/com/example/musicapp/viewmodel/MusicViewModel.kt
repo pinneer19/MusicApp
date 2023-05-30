@@ -3,6 +3,7 @@ package com.example.musicapp.viewmodel
 import android.net.Uri
 import android.os.Handler
 import android.os.Looper
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.initializer
@@ -46,11 +47,12 @@ class MusicViewModel(private val musicRepository: MusicRepository) : ViewModel()
 
     fun updatePlaylist(playlist: List<Track>) {
 
+        player.stop()
         player.clearMediaItems()
         playlist.forEach {
             player.addMediaItem(MediaItem.fromUri(Uri.parse(it.preview)))
         }
-        _musicUiState.update { state -> state.copy(isPlaying = false, playlist = playlist, currentPosition = 0L) }
+        _musicUiState.update { state -> state.copy(isPlaying = false, playlist = playlist, currentPosition = 0L, currentTrackIndex = 0) }
         player.prepare()
         player.seekTo(0, 0L)
     }

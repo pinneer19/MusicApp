@@ -14,6 +14,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.example.musicapp.viewmodel.MusicUiState
 import com.example.musicapp.viewmodel.MusicViewModel
 import kotlin.math.roundToLong
@@ -43,13 +44,14 @@ fun PlayerSlider(
             .padding(
                 start = 20.dp, end = 20.dp
             ),
-        horizontalArrangement = Arrangement.SpaceBetween,
+        //horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {
         Text(
             text = parseSliderValue(currentPosition),
+            style = MaterialTheme.typography.body1.copy(fontSize = 15.sp),
             color = MaterialTheme.colors.primary,
-            modifier = Modifier.padding(end = 7.dp)
+            modifier = Modifier.width(40.dp)
         )
         Slider(
             value = currentPosition.toFloat(),
@@ -62,9 +64,14 @@ fun PlayerSlider(
                 activeTrackColor = Color.Gray
             ),
             valueRange = 0f..duration.toFloat(),
-            modifier = Modifier.weight(1f)
+            modifier = Modifier.padding(horizontal = 7.dp).weight(1f)
         )
-        Text(text = parsedDuration, color = MaterialTheme.colors.primary)
+        Text(
+            text = parsedDuration,
+            style = MaterialTheme.typography.body1.copy(fontSize = 15.sp),
+            color = MaterialTheme.colors.primary,
+            modifier = Modifier.width(40.dp)
+        )
     }
 
 }

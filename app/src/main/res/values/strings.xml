@@ -8,6 +8,7 @@
     <string name="track_author">Almost Awesome</string>
     <string name="favourite">Add to favourite</string>
     <string name="favourite_list">Favourite</string>
+    <string name="playlists">Playlists</string>
     <string name="search_favourite">Search</string>
     <string name="add_playlist">Add</string>
     <string name="back">Go back</string>
@@ -23,4 +24,5 @@
     <string name="or_label">Or</string>
     <string name="continue_google">Continue with Google</string>
     <string name="welcome">Welcome back!</string>
+    <string name="enter_playlist_name">Enter playlist name</string>
 </resources>

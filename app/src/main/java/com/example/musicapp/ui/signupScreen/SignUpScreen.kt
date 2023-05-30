@@ -159,6 +159,7 @@ fun SignUpScreen(
                 .align(Alignment.BottomCenter)
                 .padding(bottom = 40.dp)
                 .clickable {
+                    navController.popBackStack()
                     navController.navigate(AuthScreen.Login.route)
                 }
         )

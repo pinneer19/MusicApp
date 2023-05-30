@@ -249,14 +249,6 @@ fun SignInScreen(
                 }
         )
 
-        /*if (state.value?. == true || googleSignInState?.loading == true) {
-            CircularProgressIndicator(
-                modifier = Modifier
-                    .align(Alignment.TopCenter)
-                    .padding(top = 40.dp),
-                color = MaterialTheme.colors.primary
-            )
-        }*/
         state.value?.let {
             when (it) {
                 is Resource.Success -> {

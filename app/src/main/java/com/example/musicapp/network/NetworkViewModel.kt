@@ -52,7 +52,7 @@ class NetworkViewModel(private val musicRepository: MusicApiRepository) : ViewMo
             _isLoadingAlbums.value = true
             networkUiState = try {
                 NetworkUiState.playlistsResponse = musicRepository.getPlaylists(limit)
-                _isLoadingAlbums.value = false
+                _isLoadingAlbums.emit(false)
                 NetworkUiState.Success(NetworkUiState.playlistsResponse!!)
 
             } catch (e: IOException) {

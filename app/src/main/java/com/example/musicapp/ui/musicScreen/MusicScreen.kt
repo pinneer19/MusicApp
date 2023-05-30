@@ -32,8 +32,6 @@ fun MusicScreen(
     val title = track.title
     val author = track.artist.name
 
-    //val musicUiState by musicViewModel.musicUiState.collectAsState()
-    Log.i("PLAYER", "${musicUiState.isPlaying} ${musicUiState.currentTrackIndex}")
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier.fillMaxSize()

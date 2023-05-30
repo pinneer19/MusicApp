@@ -15,6 +15,8 @@ import com.example.musicapp.network.NetworkViewModel
 import com.example.musicapp.ui.navigation.BottomBarNavigation
 import com.example.musicapp.ui.navigation.graphs.HomeNavGraph
 import com.example.musicapp.viewmodel.AuthViewModel
+import com.example.musicapp.viewmodel.EditPlaylistViewModel
+import com.example.musicapp.viewmodel.PlaylistViewModel
 
 
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
@@ -36,13 +38,14 @@ fun HomeScreen(
     ) {
         val viewModel: NetworkViewModel = viewModel(factory = NetworkViewModel.Factory)
         val trackViewModel: MusicViewModel = viewModel(factory = MusicViewModel.Factory)
-
+        val playlistViewModel: PlaylistViewModel = viewModel(factory = PlaylistViewModel.Factory)
         HomeNavGraph(
             navController = navController,
             networkViewModel = viewModel,
             musicViewModel = trackViewModel,
             authViewModel = authViewModel,
-            logOutAction = logOutAction
+            logOutAction = logOutAction,
+            playlistViewModel = playlistViewModel
         )
     }
 }

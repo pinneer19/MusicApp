@@ -7,8 +7,11 @@ import androidx.media3.exoplayer.ExoPlayer
 import com.example.musicapp.data.auth.AuthRepository
 import com.example.musicapp.data.auth.AuthRepositoryImpl
 import com.example.musicapp.data.music.*
+import com.example.musicapp.data.playlist.FirestorePlaylistRepository
+import com.example.musicapp.data.playlist.PlaylistRepository
 import com.example.musicapp.network.DeezerApiService
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
@@ -18,6 +21,7 @@ interface AppContainer {
     val musicApiRepository: MusicApiRepository
     val playerRepository: MusicRepository
     val authRepository: AuthRepository
+    val playlistRepository: PlaylistRepository
 }
 
 class MusicAppContainer(private val app: Application) : AppContainer {
@@ -38,14 +42,13 @@ class MusicAppContainer(private val app: Application) : AppContainer {
         retrofit.create(DeezerApiService::class.java)
     }
 
-    private val player: ExoPlayer = ExoPlayer.Builder(app).build()
-
     private val musicService: MusicService by lazy {
         ExoPlayerMusicService(app)
     }
 
     private val firebaseInstance = FirebaseAuth.getInstance()
 
+    private val firestore = FirebaseFirestore.getInstance()
 
     override val musicApiRepository: MusicApiRepository by lazy {
         NetworkMusicRepository(retrofitService)
@@ -56,5 +59,10 @@ class MusicAppContainer(private val app: Application) : AppContainer {
 
     override val authRepository: AuthRepository by lazy {
         AuthRepositoryImpl(firebaseInstance, app)
+    }
+
+    override val playlistRepository: PlaylistRepository by lazy {
+
+        FirestorePlaylistRepository(firestore, firebaseInstance)
     }
 }
